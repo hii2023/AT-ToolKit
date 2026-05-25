@@ -3,14 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AT ToolKit - 6 free online tools: QR Code Generator, Invoice Maker, Image Compressor, Word Counter, Password Generator, Unit Converter. No signup required.">
-  <meta name="keywords" content="QR code generator, invoice generator, image compressor, word counter, password generator, unit converter, free tools">
-  <title>AT ToolKit — Free Online Tools for Everyone</title>
+  <meta name="description" content="TempTool - 6 free online tools: QR Code Generator, Invoice Maker, Image Compressor, Word Counter, Password Generator, Unit Converter. No signup required.">
+  <meta name="keywords" content="QR code generator, invoice generator, image compressor, word counter, password generator, unit converter, free tools online">
+  <title>TempTool — Free Online Tools for Everyone</title>
 
   <!-- Open Graph -->
-  <meta property="og:title" content="AT ToolKit — 6 Free Tools in One Place">
+  <meta property="og:title" content="TempTool — 6 Free Tools in One Place">
   <meta property="og:description" content="QR Code, Invoice, Image Compressor, Word Counter, Password Generator, Unit Converter — all free, no signup.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://temptool.app">
+
+  <!-- ═══════════════════════════════════════════════════
+       GOOGLE ADSENSE — uncomment after approval
+       Replace ca-pub-XXXXXXXXXXXXXXXX with your Publisher ID
+       ════════════════════════════════════════════════════
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  ══════════════════════════════════════════════════════ -->
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -159,15 +167,10 @@
       line-height: 1.7;
     }
 
-    /* ===== AD SLOT ===== */
-    .ad-slot {
-      background: rgba(255,255,255,0.018);
-      border: 1px dashed rgba(255,255,255,0.07);
-      border-radius: 12px;
-      height: 90px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text-muted); font-size: 12px;
-      margin: 0 0 36px;
+    /* ===== AD UNIT ===== */
+    .ad-unit {
+      width: 100%; margin: 0 0 36px;
+      min-height: 0; /* collapses cleanly when no ads */
     }
 
     /* ===== TOOL GRID ===== */
@@ -571,7 +574,7 @@
 <header>
   <a href="#" class="logo">
     <div class="logo-mark">AT</div>
-    <span class="logo-name">Tool<em>Kit</em></span>
+    <span class="logo-name">Temp<em>Tool</em></span>
   </a>
   <div class="header-actions">
     <select class="lang-picker" id="langPicker" onchange="applyLang(this.value)">
@@ -605,8 +608,17 @@
     <p data-t="sub">6 powerful tools in one place — works in your language, on any device.</p>
   </section>
 
-  <!-- Top Ad Slot (replace with real AdSense code) -->
-  <div class="ad-slot">[ Ad Space 728×90 — Google AdSense ]</div>
+  <!-- ═══ TOP AD UNIT — uncomment after AdSense approval ═══
+  <div class="ad-unit">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  ═══════════════════════════════════════════════════════ -->
 
   <!-- Tool Grid — 2 cols × 3 rows -->
   <div class="tools-grid">
@@ -661,19 +673,28 @@
 
   </div>
 
-  <!-- Bottom Ad Slot -->
-  <div class="ad-slot" style="margin-top:40px">[ Ad Space 728×90 — Google AdSense ]</div>
+  <!-- ═══ BOTTOM AD UNIT — uncomment after AdSense approval ═══
+  <div class="ad-unit" style="margin-top:40px">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  ═══════════════════════════════════════════════════════ -->
 
 </main>
 
 <!-- ===== FOOTER ===== -->
 <footer>
-  <p>AT ToolKit &mdash; Free forever, for everyone &nbsp;·&nbsp;
+  <p>TempTool &mdash; Free forever, for everyone &nbsp;·&nbsp;
     <a href="#">Privacy</a> &nbsp;·&nbsp;
     <a href="#">Terms</a> &nbsp;·&nbsp;
     <a href="mailto:hello@attoolkit.com">Contact</a>
   </p>
-  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 AT ToolKit. All rights reserved.</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
 </footer>
 
 
