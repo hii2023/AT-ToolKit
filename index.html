@@ -7,11 +7,20 @@
   <meta name="keywords" content="QR code generator, invoice generator, image compressor, word counter, password generator, unit converter, free tools online">
   <title>TempTool — Free Online Tools for Everyone</title>
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+
   <!-- Open Graph -->
   <meta property="og:title" content="TempTool — 6 Free Tools in One Place">
   <meta property="og:description" content="QR Code, Invoice, Image Compressor, Word Counter, Password Generator, Unit Converter — all free, no signup.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://temptool.app">
+  <meta property="og:image" content="https://temptool.app/assets/logo.png">
+  <meta property="og:image:width" content="1254">
+  <meta property="og:image:height" content="1254">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="https://temptool.app/assets/logo.png">
 
   <!-- ═══ GOOGLE SEARCH CONSOLE VERIFICATION ═══════════
        1. Go to search.google.com/search-console
@@ -116,12 +125,15 @@
     }
     .logo-mark {
       width: 38px; height: 38px;
-      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
       border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 13px; color: #fff;
-      letter-spacing: -0.5px; flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .logo-mark img {
+      width: 38px; height: 38px;
+      object-fit: contain;
+      border-radius: 11px;
     }
     .logo-name {
       font-weight: 800; font-size: 19px; color: var(--text);
@@ -594,7 +606,7 @@
 <!-- ===== HEADER ===== -->
 <header>
   <a href="#" class="logo">
-    <div class="logo-mark">AT</div>
+    <div class="logo-mark"><img src="assets/logo.png" alt="TempTool logo"></div>
     <span class="logo-name">Temp<em>Tool</em></span>
   </a>
   <div class="header-actions">
