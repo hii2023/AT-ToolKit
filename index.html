@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AT ToolKit - 6 free online tools: QR Code Generator, Invoice Maker, Image Compressor, Word Counter, Password Generator, Unit Converter. No signup required.">
+  <meta name="keywords" content="QR code generator, invoice generator, image compressor, word counter, password generator, unit converter, free tools">
+  <title>AT ToolKit — Free Online Tools for Everyone</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="AT ToolKit — 6 Free Tools in One Place">
+  <meta property="og:description" content="QR Code, Invoice, Image Compressor, Word Counter, Password Generator, Unit Converter — all free, no signup.">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --bg: #08090E;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-focus: rgba(99,102,241,0.6);
+      --text: #F1F5F9;
+      --text-sub: #94A3B8;
+      --text-muted: #475569;
+      --primary: #6366F1;
+      --radius: 18px;
+      --radius-sm: 10px;
+      --ease: 0.2s ease;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== BACKGROUND ORBS ===== */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+    .bg-orb-1 {
+      width: 600px; height: 600px;
+      top: -200px; left: -150px;
+      background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 70%);
+    }
+    .bg-orb-2 {
+      width: 500px; height: 500px;
+      bottom: -150px; right: -100px;
+      background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%);
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(8,9,14,0.85);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex; align-items: center;
+      padding: 0 28px;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; user-select: none;
+    }
+    .logo-mark {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 13px; color: #fff;
+      letter-spacing: -0.5px; flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+    }
+    .logo-name {
+      font-weight: 800; font-size: 19px; color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .logo-name em { color: #818CF8; font-style: normal; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .lang-picker {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text); font-family: inherit;
+      font-size: 13px; padding: 7px 10px;
+      border-radius: 9px; cursor: pointer; outline: none;
+      transition: border-color var(--ease);
+    }
+    .lang-picker:hover, .lang-picker:focus { border-color: rgba(255,255,255,0.18); }
+    .btn-premium {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      color: #fff; border: none; font-family: inherit;
+      font-size: 13px; font-weight: 700; padding: 8px 18px;
+      border-radius: 9px; cursor: pointer;
+      transition: opacity var(--ease), transform var(--ease);
+      box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+    }
+    .btn-premium:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ===== MAIN LAYOUT ===== */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center;
+      padding: 80px 20px 60px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.28);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      color: #A5B4FC; margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .hero-badge::before { content: '✦'; opacity: 0.7; }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      margin-bottom: 18px;
+      background: linear-gradient(160deg, #F8FAFC 0%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.05rem; color: var(--text-sub);
+      max-width: 460px; margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===== AD SLOT ===== */
+    .ad-slot {
+      background: rgba(255,255,255,0.018);
+      border: 1px dashed rgba(255,255,255,0.07);
+      border-radius: 12px;
+      height: 90px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 12px;
+      margin: 0 0 36px;
+    }
+
+    /* ===== TOOL GRID ===== */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 820px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .tools-grid { grid-template-columns: 1fr; gap: 14px; } }
+
+    /* ===== TOOL CARD ===== */
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px 24px;
+      cursor: pointer;
+      transition: background var(--ease), border-color var(--ease), transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--c);
+      opacity: 0;
+      transition: opacity var(--ease);
+    }
+    .tool-card:hover {
+      background: var(--surface-hover);
+      border-color: rgba(255,255,255,0.13);
+      transform: translateY(-3px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+    }
+    .tool-card:hover::after { opacity: 1; }
+    .tool-card:active { transform: translateY(-1px); }
+
+    .card-icon {
+      width: 54px; height: 54px;
+      border-radius: 15px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; margin-bottom: 18px;
+      background: var(--c-bg);
+    }
+    .card-name {
+      font-size: 16px; font-weight: 750;
+      color: var(--text); margin-bottom: 7px;
+      letter-spacing: -0.3px;
+    }
+    .card-desc {
+      font-size: 13px; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 18px;
+    }
+    .card-cta {
+      font-size: 13px; font-weight: 700;
+      color: var(--c);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .card-cta::after { content: '→'; transition: transform var(--ease); }
+    .tool-card:hover .card-cta::after { transform: translateX(4px); }
+
+    /* ===== MODAL ===== */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #0D0E17;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      width: 100%; max-width: 580px;
+      max-height: 92vh;
+      overflow-y: auto;
+      transform: scale(0.94) translateY(24px);
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-wide { max-width: 680px; }
+
+    .modal-head {
+      padding: 24px 24px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0;
+      background: #0D0E17;
+      z-index: 10;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title-wrap {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .modal-icon {
+      width: 42px; height: 42px;
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px;
+    }
+    .modal-title {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.4px;
+    }
+    .close-btn {
+      width: 34px; height: 34px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; color: var(--text-sub);
+      cursor: pointer; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--ease); flex-shrink: 0;
+    }
+    .close-btn:hover { background: var(--surface-hover); color: var(--text); }
+    .modal-body { padding: 24px; }
+
+    /* ===== FORM ELEMENTS ===== */
+    .fg { margin-bottom: 16px; }
+    label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--text-sub); margin-bottom: 7px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    input[type="url"],
+    textarea, select {
+      width: 100%;
+      background: rgba(255,255,255,0.048);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      color: var(--text); font-family: inherit; font-size: 14px;
+      outline: none;
+      transition: border-color var(--ease), background var(--ease);
+      appearance: none; -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--border-focus);
+      background: rgba(255,255,255,0.065);
+    }
+    input[type="color"] {
+      width: 100%; height: 42px;
+      padding: 3px 6px; cursor: pointer;
+    }
+    textarea { resize: vertical; min-height: 110px; }
+    select option { background: #1a1b28; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+
+    .sep { height: 1px; background: var(--border); margin: 22px 0; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 7px; padding: 11px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 700;
+      font-family: inherit; cursor: pointer; border: none;
+      transition: all var(--ease); text-decoration: none;
+      letter-spacing: -0.2px;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-full { width: 100%; }
+    .btn-primary {
+      background: var(--primary); color: #fff;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.28);
+    }
+    .btn-primary:hover { background: #5254CC; transform: translateY(-1px); }
+    .btn-ghost {
+      background: var(--surface); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface-hover); }
+
+    /* ===== OUTPUT BOX ===== */
+    .out-box {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px; margin-top: 18px;
+    }
+
+    /* ===== QR ===== */
+    #qr-canvas-wrap {
+      display: flex; justify-content: center; align-items: center;
+      background: #fff; border-radius: 14px; padding: 20px;
+    }
+    #qr-canvas-wrap canvas, #qr-canvas-wrap img { display: block; }
+
+    /* ===== IMAGE COMPRESSOR ===== */
+    .dropzone {
+      border: 2px dashed rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 44px 20px;
+      text-align: center; cursor: pointer;
+      transition: all var(--ease);
+    }
+    .dropzone:hover, .dropzone.over {
+      border-color: var(--primary);
+      background: rgba(99,102,241,0.06);
+    }
+    .drop-emoji { font-size: 42px; margin-bottom: 12px; }
+    .drop-main { font-size: 15px; font-weight: 600; color: var(--text-sub); }
+    .drop-sub { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+    .img-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 16px;
+    }
+    .img-panel { text-align: center; }
+    .img-panel img {
+      width: 100%; max-height: 140px; object-fit: contain;
+      border-radius: 10px; border: 1px solid var(--border);
+    }
+    .img-label { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+    .img-size { font-size: 13px; font-weight: 700; margin-top: 3px; }
+
+    /* ===== RANGE SLIDER ===== */
+    input[type="range"] {
+      width: 100%; appearance: none; -webkit-appearance: none;
+      height: 5px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; outline: none; cursor: pointer;
+      border: none; padding: 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px;
+      background: var(--primary); border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+    }
+
+    /* ===== WORD COUNTER ===== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px; margin-top: 16px;
+    }
+    .stat-tile {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 10px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 26px; font-weight: 900;
+      letter-spacing: -1px; color: var(--text);
+      margin-bottom: 4px;
+    }
+    .stat-lbl {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+
+    /* ===== PASSWORD ===== */
+    .pwd-box {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 17px; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+      min-height: 58px; margin: 16px 0;
+      word-break: break-all; letter-spacing: 1.5px;
+    }
+    .pwd-text { flex: 1; }
+    .strength-track {
+      height: 5px; background: rgba(255,255,255,0.08);
+      border-radius: 3px; overflow: hidden; margin-bottom: 18px;
+    }
+    .strength-bar {
+      height: 100%; border-radius: 3px;
+      transition: width 0.35s ease, background 0.35s ease;
+    }
+    .check-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0; cursor: pointer;
+    }
+    .check-row input[type="checkbox"] {
+      width: 17px; height: 17px;
+      cursor: pointer; accent-color: var(--primary);
+      border: none; border-radius: 4px;
+    }
+    .check-row span { font-size: 14px; color: var(--text-sub); cursor: pointer; }
+
+    /* ===== UNIT CONVERTER ===== */
+    .cat-tabs {
+      display: flex; gap: 4px;
+      background: rgba(0,0,0,0.3);
+      padding: 4px; border-radius: 12px;
+      margin-bottom: 20px; overflow-x: auto;
+    }
+    .cat-tab {
+      flex: 1; padding: 8px 10px;
+      border-radius: 9px; border: none;
+      background: transparent; color: var(--text-muted);
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: inherit; white-space: nowrap;
+      transition: all var(--ease);
+    }
+    .cat-tab.on { background: var(--primary); color: #fff; }
+    .conv-row {
+      display: flex; justify-content: space-between;
+      align-items: center; padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .conv-row:last-child { border-bottom: none; }
+    .conv-label { font-size: 13px; color: var(--text-sub); }
+    .conv-value { font-size: 14px; font-weight: 700; color: var(--text); }
+
+    /* ===== INVOICE ===== */
+    .inv-item-row {
+      display: grid;
+      grid-template-columns: 1fr 64px 88px 34px;
+      gap: 8px; align-items: start;
+      margin-bottom: 8px;
+    }
+    .inv-item-row input { margin: 0; }
+    .del-item {
+      height: 42px; width: 34px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 8px; color: #EF4444;
+      cursor: pointer; font-size: 17px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--ease);
+    }
+    .del-item:hover { background: rgba(239,68,68,0.22); }
+    .col-heads {
+      display: grid;
+      grid-template-columns: 1fr 64px 88px 34px;
+      gap: 8px; padding: 0 0 4px;
+    }
+    .col-head {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+      color: var(--text-muted); text-transform: uppercase;
+      padding-left: 12px;
+    }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+      background: #1C1E2E; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 13px 22px;
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0; transform: translateY(12px);
+      transition: all 0.3s ease; pointer-events: none;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center; color: var(--text-muted);
+      font-size: 13px; line-height: 1.8;
+    }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text-sub); }
+
+    /* ===== RTL ===== */
+    [dir="rtl"] .header-actions { flex-direction: row-reverse; }
+    [dir="rtl"] .pwd-box { direction: ltr; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.09); border-radius: 3px; }
+
+    /* ===== RESPONSIVE HEADER ===== */
+    @media (max-width: 480px) {
+      header { padding: 0 16px; }
+      .logo-name { font-size: 17px; }
+      .btn-premium { padding: 7px 13px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- Toast notification -->
+<div id="toast"></div>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <a href="#" class="logo">
+    <div class="logo-mark">AT</div>
+    <span class="logo-name">Tool<em>Kit</em></span>
+  </a>
+  <div class="header-actions">
+    <select class="lang-picker" id="langPicker" onchange="applyLang(this.value)">
+      <option value="en">🇺🇸 English</option>
+      <option value="es">🇪🇸 Español</option>
+      <option value="pt">🇧🇷 Português</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="de">🇩🇪 Deutsch</option>
+      <option value="hi">🇮🇳 हिंदी</option>
+      <option value="ja">🇯🇵 日本語</option>
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="ru">🇷🇺 Русский</option>
+      <option value="id">🇮🇩 Indonesia</option>
+      <option value="ar">🇸🇦 العربية</option>
+      <option value="tr">🇹🇷 Türkçe</option>
+      <option value="vi">🇻🇳 Tiếng Việt</option>
+      <option value="it">🇮🇹 Italiano</option>
+    </select>
+    <button class="btn-premium" onclick="toast('🚀 Premium coming soon!')">✦ Premium</button>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge" data-t="badge">FREE · NO SIGNUP · NO LIMITS</div>
+    <h1 data-t="h1">Pick a Tool.<br>Get It Done.</h1>
+    <p data-t="sub">6 powerful tools in one place — works in your language, on any device.</p>
+  </section>
+
+  <!-- Top Ad Slot (replace with real AdSense code) -->
+  <div class="ad-slot">[ Ad Space 728×90 — Google AdSense ]</div>
+
+  <!-- Tool Grid -->
+  <div class="tools-grid">
+
+    <!-- QR Code -->
+    <div class="tool-card" style="--c:#6366F1;--c-bg:rgba(99,102,241,0.12)" onclick="open_modal('qr')">
+      <div class="card-icon">🔲</div>
+      <div class="card-name" data-t="qrName">QR Code Generator</div>
+      <div class="card-desc" data-t="qrDesc">Turn any URL or text into a scannable QR code instantly</div>
+      <div class="card-cta" style="color:#818CF8">Generate</div>
+    </div>
+
+    <!-- Invoice -->
+    <div class="tool-card" style="--c:#10B981;--c-bg:rgba(16,185,129,0.12)" onclick="open_modal('invoice')">
+      <div class="card-icon">🧾</div>
+      <div class="card-name" data-t="invName">Invoice Generator</div>
+      <div class="card-desc" data-t="invDesc">Create a professional invoice and download it as PDF</div>
+      <div class="card-cta" style="color:#34D399">Create</div>
+    </div>
+
+    <!-- Image -->
+    <div class="tool-card" style="--c:#F59E0B;--c-bg:rgba(245,158,11,0.12)" onclick="open_modal('image')">
+      <div class="card-icon">🖼️</div>
+      <div class="card-name" data-t="imgName">Image Compressor</div>
+      <div class="card-desc" data-t="imgDesc">Shrink image file size without visible quality loss</div>
+      <div class="card-cta" style="color:#FCD34D">Compress</div>
+    </div>
+
+    <!-- Word Counter -->
+    <div class="tool-card" style="--c:#3B82F6;--c-bg:rgba(59,130,246,0.12)" onclick="open_modal('word')">
+      <div class="card-icon">📝</div>
+      <div class="card-name" data-t="wrdName">Word Counter</div>
+      <div class="card-desc" data-t="wrdDesc">Count words, characters, sentences and reading time</div>
+      <div class="card-cta" style="color:#60A5FA">Count</div>
+    </div>
+
+    <!-- Password -->
+    <div class="tool-card" style="--c:#EF4444;--c-bg:rgba(239,68,68,0.12)" onclick="open_modal('pass')">
+      <div class="card-icon">🔐</div>
+      <div class="card-name" data-t="pwdName">Password Generator</div>
+      <div class="card-desc" data-t="pwdDesc">Generate strong, secure passwords in one click</div>
+      <div class="card-cta" style="color:#F87171">Generate</div>
+    </div>
+
+    <!-- Unit Converter -->
+    <div class="tool-card" style="--c:#8B5CF6;--c-bg:rgba(139,92,246,0.12)" onclick="open_modal('unit')">
+      <div class="card-icon">⚖️</div>
+      <div class="card-name" data-t="unitName">Unit Converter</div>
+      <div class="card-desc" data-t="unitDesc">Convert length, weight, temperature, area and speed</div>
+      <div class="card-cta" style="color:#A78BFA">Convert</div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Ad Slot -->
+  <div class="ad-slot" style="margin-top:40px">[ Ad Space 728×90 — Google AdSense ]</div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>AT ToolKit &mdash; Free forever, for everyone &nbsp;·&nbsp;
+    <a href="#">Privacy</a> &nbsp;·&nbsp;
+    <a href="#">Terms</a> &nbsp;·&nbsp;
+    <a href="mailto:hello@attoolkit.com">Contact</a>
+  </p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 AT ToolKit. All rights reserved.</p>
+</footer>
+
+
+<!-- =========================================================
+     MODAL: QR CODE
+========================================================= -->
+<div class="overlay" id="ov-qr">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(99,102,241,0.15)">🔲</div>
+        <span class="modal-title" data-t="qrName">QR Code Generator</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('qr')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label data-t="qrLbl">Enter URL or Text</label>
+        <input type="text" id="qr-in" placeholder="https://yourwebsite.com" data-tp="qrPh">
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Size</label>
+          <select id="qr-size">
+            <option value="200">Small (200×200)</option>
+            <option value="256" selected>Medium (256×256)</option>
+            <option value="400">Large (400×400)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Color</label>
+          <input type="color" id="qr-color" value="#000000">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="do_qr()">🔲 Generate QR Code</button>
+      <div id="qr-out" style="display:none;margin-top:20px">
+        <div id="qr-canvas-wrap"></div>
+        <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="dl_qr()">⬇ Download PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: INVOICE
+========================================================= -->
+<div class="overlay" id="ov-invoice">
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(16,185,129,0.15)">🧾</div>
+        <span class="modal-title" data-t="invName">Invoice Generator</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('invoice')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="row2">
+        <div>
+          <div class="fg"><label>Your Name / Company</label><input type="text" id="i-from" placeholder="Your Business"></div>
+          <div class="fg"><label>Your Email</label><input type="email" id="i-from-email" placeholder="you@email.com"></div>
+        </div>
+        <div>
+          <div class="fg"><label>Bill To (Client)</label><input type="text" id="i-to" placeholder="Client Name"></div>
+          <div class="fg"><label>Client Email</label><input type="email" id="i-to-email" placeholder="client@email.com"></div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Invoice Date</label><input type="date" id="i-date"></div>
+        <div class="fg"><label>Due Date</label><input type="date" id="i-due"></div>
+      </div>
+      <div class="sep"></div>
+      <div class="col-heads">
+        <div class="col-head">Description</div>
+        <div class="col-head">Qty</div>
+        <div class="col-head">Price</div>
+        <div></div>
+      </div>
+      <div id="inv-rows">
+        <div class="inv-item-row">
+          <input type="text" placeholder="Service or product">
+          <input type="number" value="1" min="1" placeholder="1">
+          <input type="number" value="" min="0" step="0.01" placeholder="0.00">
+          <button class="del-item" onclick="del_row(this)">×</button>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="margin-top:8px;font-size:13px" onclick="add_row()">+ Add Item</button>
+      <div class="row2" style="margin-top:16px">
+        <div class="fg">
+          <label>Tax (%)</label>
+          <input type="number" id="i-tax" placeholder="0" value="0" min="0" max="100">
+        </div>
+        <div class="fg">
+          <label>Currency</label>
+          <select id="i-cur">
+            <option value="$">$ USD</option>
+            <option value="€">€ EUR</option>
+            <option value="£">£ GBP</option>
+            <option value="₹">₹ INR</option>
+            <option value="R$">R$ BRL</option>
+            <option value="¥">¥ JPY / CNY</option>
+            <option value="MX$">MX$ MXN</option>
+            <option value="Rp">Rp IDR</option>
+            <option value="₩">₩ KRW</option>
+            <option value="₺">₺ TRY</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Notes (optional)</label>
+        <textarea id="i-notes" placeholder="Payment terms, bank details, thank you note..." style="min-height:70px"></textarea>
+      </div>
+      <button class="btn btn-full" style="background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-weight:700;font-size:14px" onclick="do_invoice()">🧾 Download Invoice PDF</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: IMAGE COMPRESSOR
+========================================================= -->
+<div class="overlay" id="ov-image">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(245,158,11,0.15)">🖼️</div>
+        <span class="modal-title" data-t="imgName">Image Compressor</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('image')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="file" id="img-file" accept="image/*" style="display:none" onchange="load_img(this)">
+      <div class="dropzone" id="img-drop"
+           onclick="document.getElementById('img-file').click()"
+           ondragover="event.preventDefault();this.classList.add('over')"
+           ondragleave="this.classList.remove('over')"
+           ondrop="img_drop(event)">
+        <div class="drop-emoji">🖼️</div>
+        <div class="drop-main">Click to upload or drag & drop</div>
+        <div class="drop-sub">JPG, PNG, WebP · Max 10 MB</div>
+      </div>
+      <div id="img-controls" style="display:none">
+        <div class="fg" style="margin-top:18px">
+          <label style="display:flex;justify-content:space-between">
+            <span>Quality</span>
+            <span id="q-val" style="color:#FCD34D;font-weight:700">80%</span>
+          </label>
+          <input type="range" id="q-slider" min="10" max="100" value="80"
+                 oninput="document.getElementById('q-val').textContent=this.value+'%';compress_img()">
+        </div>
+        <div class="img-pair">
+          <div class="img-panel">
+            <img id="img-orig" src="" alt="Original">
+            <div class="img-label">Original</div>
+            <div class="img-size" id="orig-sz">—</div>
+          </div>
+          <div class="img-panel">
+            <img id="img-comp" src="" alt="Compressed">
+            <div class="img-label">Compressed</div>
+            <div class="img-size" id="comp-sz" style="color:#10B981">—</div>
+          </div>
+        </div>
+        <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700" onclick="dl_img()">⬇ Download Compressed Image</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: WORD COUNTER
+========================================================= -->
+<div class="overlay" id="ov-word">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(59,130,246,0.15)">📝</div>
+        <span class="modal-title" data-t="wrdName">Word Counter</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('word')">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="wrd-in" placeholder="Paste or type your text here..." style="min-height:170px" oninput="count_words()"></textarea>
+      <div class="stats-grid">
+        <div class="stat-tile"><div class="stat-num" id="s-words">0</div><div class="stat-lbl">Words</div></div>
+        <div class="stat-tile"><div class="stat-num" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
+        <div class="stat-tile"><div class="stat-num" id="s-ns">0</div><div class="stat-lbl">No Spaces</div></div>
+        <div class="stat-tile"><div class="stat-num" id="s-sent">0</div><div class="stat-lbl">Sentences</div></div>
+        <div class="stat-tile"><div class="stat-num" id="s-para">0</div><div class="stat-lbl">Paragraphs</div></div>
+        <div class="stat-tile"><div class="stat-num" id="s-read">0</div><div class="stat-lbl">Min Read</div></div>
+      </div>
+      <button class="btn btn-ghost btn-full" style="margin-top:14px" onclick="document.getElementById('wrd-in').value='';count_words()">🗑 Clear Text</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: PASSWORD GENERATOR
+========================================================= -->
+<div class="overlay" id="ov-pass">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(239,68,68,0.15)">🔐</div>
+        <span class="modal-title" data-t="pwdName">Password Generator</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('pass')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pwd-box">
+        <span class="pwd-text" id="pwd-out">Click Generate below...</span>
+        <button class="btn btn-ghost" style="padding:8px 10px;flex-shrink:0" onclick="copy_pwd()" title="Copy">📋</button>
+      </div>
+      <div class="strength-track">
+        <div class="strength-bar" id="str-bar" style="width:0%;background:#EF4444"></div>
+      </div>
+      <div class="fg">
+        <label style="display:flex;justify-content:space-between">
+          <span>Length</span>
+          <span id="pwd-len-lbl" style="color:var(--primary);font-weight:700">16</span>
+        </label>
+        <input type="range" id="pwd-len" min="4" max="64" value="16"
+               oninput="document.getElementById('pwd-len-lbl').textContent=this.value;gen_pwd()">
+      </div>
+      <label class="check-row"><input type="checkbox" id="p-up" checked onchange="gen_pwd()"><span>Uppercase letters (A-Z)</span></label>
+      <label class="check-row"><input type="checkbox" id="p-lo" checked onchange="gen_pwd()"><span>Lowercase letters (a-z)</span></label>
+      <label class="check-row"><input type="checkbox" id="p-nu" checked onchange="gen_pwd()"><span>Numbers (0-9)</span></label>
+      <label class="check-row"><input type="checkbox" id="p-sy" onchange="gen_pwd()"><span>Symbols (!@#$%^&*)</span></label>
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button class="btn btn-full" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;font-weight:700" onclick="gen_pwd()">🔄 Generate</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="copy_pwd()">📋 Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: UNIT CONVERTER
+========================================================= -->
+<div class="overlay" id="ov-unit">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(139,92,246,0.15)">⚖️</div>
+        <span class="modal-title" data-t="unitName">Unit Converter</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('unit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="cat-tabs" id="cat-tabs">
+        <button class="cat-tab on" onclick="set_cat('length',this)">📏 Length</button>
+        <button class="cat-tab" onclick="set_cat('weight',this)">⚖️ Weight</button>
+        <button class="cat-tab" onclick="set_cat('temp',this)">🌡️ Temp</button>
+        <button class="cat-tab" onclick="set_cat('area',this)">📐 Area</button>
+        <button class="cat-tab" onclick="set_cat('speed',this)">💨 Speed</button>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>Value</label><input type="number" id="u-val" placeholder="Enter number" oninput="do_convert()"></div>
+        <div class="fg"><label>From Unit</label><select id="u-from" onchange="do_convert()"></select></div>
+      </div>
+      <div class="out-box" id="u-out" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+<script>
+"use strict";
+
+// ─── TRANSLATIONS ─────────────────────────────────────────────────────────────
+const T = {
+  en:{ badge:"FREE · NO SIGNUP · NO LIMITS", h1:"Pick a Tool.<br>Get It Done.", sub:"6 powerful tools in one place — works in your language, on any device.", qrName:"QR Code Generator", qrDesc:"Turn any URL or text into a scannable QR code instantly", invName:"Invoice Generator", invDesc:"Create a professional invoice and download it as PDF", imgName:"Image Compressor", imgDesc:"Shrink image file size without visible quality loss", wrdName:"Word Counter", wrdDesc:"Count words, characters, sentences and reading time", pwdName:"Password Generator", pwdDesc:"Generate strong, secure passwords in one click", unitName:"Unit Converter", unitDesc:"Convert length, weight, temperature, area and speed", qrLbl:"Enter URL or Text", qrPh:"https://yourwebsite.com" },
+  es:{ badge:"GRATIS · SIN REGISTRO · SIN LÍMITES", h1:"Elige una herramienta.<br>Termina el trabajo.", sub:"6 herramientas en un solo lugar — en tu idioma, en cualquier dispositivo.", qrName:"Generador de QR", qrDesc:"Convierte cualquier enlace o texto en un código QR", invName:"Generador de Facturas", invDesc:"Crea y descarga una factura profesional en PDF", imgName:"Compresor de Imágenes", imgDesc:"Reduce el tamaño del archivo sin perder calidad", wrdName:"Contador de Palabras", wrdDesc:"Cuenta palabras, caracteres, frases y tiempo de lectura", pwdName:"Generador de Contraseñas", pwdDesc:"Genera contraseñas seguras al instante", unitName:"Convertidor de Unidades", unitDesc:"Convierte longitud, peso, temperatura, área y velocidad", qrLbl:"Ingresa URL o texto", qrPh:"https://tuweb.com" },
+  pt:{ badge:"GRÁTIS · SEM CADASTRO · SEM LIMITES", h1:"Escolha uma ferramenta.<br>Faça acontecer.", sub:"6 ferramentas num só lugar — no seu idioma, em qualquer dispositivo.", qrName:"Gerador de QR Code", qrDesc:"Transforme qualquer link ou texto em QR Code", invName:"Gerador de Faturas", invDesc:"Crie e baixe faturas profissionais em PDF", imgName:"Compressor de Imagens", imgDesc:"Reduza o tamanho da imagem sem perder qualidade", wrdName:"Contador de Palavras", wrdDesc:"Conte palavras, caracteres, frases e tempo de leitura", pwdName:"Gerador de Senhas", pwdDesc:"Gere senhas fortes e seguras instantaneamente", unitName:"Conversor de Unidades", unitDesc:"Converta comprimento, peso, temperatura, área e velocidade", qrLbl:"Digite URL ou texto", qrPh:"https://seusite.com" },
+  fr:{ badge:"GRATUIT · SANS INSCRIPTION · SANS LIMITES", h1:"Choisissez un outil.<br>Faites-le.", sub:"6 outils puissants en un seul endroit — dans votre langue, sur n'importe quel appareil.", qrName:"Générateur QR Code", qrDesc:"Transformez n'importe quel lien en QR Code", invName:"Générateur de Factures", invDesc:"Créez et téléchargez une facture professionnelle en PDF", imgName:"Compresseur d'Images", imgDesc:"Réduisez la taille des images sans perte de qualité", wrdName:"Compteur de Mots", wrdDesc:"Comptez mots, caractères, phrases et temps de lecture", pwdName:"Générateur de Mots de Passe", pwdDesc:"Générez des mots de passe forts instantanément", unitName:"Convertisseur d'Unités", unitDesc:"Convertissez longueur, poids, température, surface et vitesse", qrLbl:"Entrez l'URL ou le texte", qrPh:"https://votresite.com" },
+  de:{ badge:"KOSTENLOS · OHNE ANMELDUNG · OHNE LIMITS", h1:"Wähle ein Werkzeug.<br>Erledige es.", sub:"6 leistungsstarke Tools an einem Ort — in deiner Sprache, auf jedem Gerät.", qrName:"QR-Code Generator", qrDesc:"Verwandele jeden Link in einen scannbaren QR-Code", invName:"Rechnungs-Generator", invDesc:"Erstelle und lade Rechnungen als PDF herunter", imgName:"Bild-Kompressor", imgDesc:"Reduziere die Dateigröße ohne sichtbaren Qualitätsverlust", wrdName:"Wortzähler", wrdDesc:"Zähle Wörter, Zeichen, Sätze und Lesezeit", pwdName:"Passwort-Generator", pwdDesc:"Generiere starke, sichere Passwörter sofort", unitName:"Einheiten-Konverter", unitDesc:"Konvertiere Länge, Gewicht, Temperatur, Fläche und Geschwindigkeit", qrLbl:"URL oder Text eingeben", qrPh:"https://ihrewebseite.de" },
+  hi:{ badge:"मुफ्त · बिना रजिस्ट्रेशन · बिना सीमा", h1:"टूल चुनें।<br>काम पूरा करें।", sub:"एक जगह 6 टूल्स — आपकी भाषा में, किसी भी डिवाइस पर।", qrName:"QR कोड जनरेटर", qrDesc:"किसी भी लिंक या टेक्स्ट को QR कोड में बदलें", invName:"बिल / इनवॉइस बनाएं", invDesc:"प्रोफेशनल इनवॉइस PDF में डाउनलोड करें", imgName:"इमेज कंप्रेसर", imgDesc:"गुणवत्ता खोए बिना इमेज का साइज कम करें", wrdName:"शब्द गणक", wrdDesc:"शब्द, अक्षर, वाक्य और पढ़ने का समय गिनें", pwdName:"पासवर्ड जनरेटर", pwdDesc:"मजबूत पासवर्ड तुरंत बनाएं", unitName:"यूनिट कनवर्टर", unitDesc:"लंबाई, वजन, तापमान और क्षेत्र बदलें", qrLbl:"URL या टेक्स्ट दर्ज करें", qrPh:"https://yourwebsite.com" },
+  ja:{ badge:"無料 · 登録不要 · 制限なし", h1:"ツールを選んで<br>作業を完了しよう。", sub:"6つの強力なツールが一か所に — あなたの言語で、どのデバイスでも。", qrName:"QRコード生成", qrDesc:"URLやテキストを即座にQRコードに変換", invName:"請求書作成", invDesc:"プロフェッショナルな請求書をPDFでダウンロード", imgName:"画像圧縮", imgDesc:"画質を保ちながらファイルサイズを削減", wrdName:"文字数カウント", wrdDesc:"単語数・文字数・文数・読了時間をカウント", pwdName:"パスワード生成", pwdDesc:"強力で安全なパスワードを即座に生成", unitName:"単位変換", unitDesc:"長さ・重さ・温度・面積・速度を変換", qrLbl:"URLまたはテキストを入力", qrPh:"https://yourwebsite.com" },
+  ko:{ badge:"무료 · 가입 불필요 · 제한 없음", h1:"도구를 선택하고<br>작업을 완료하세요.", sub:"한 곳에서 6가지 도구 — 여러분의 언어로, 모든 기기에서.", qrName:"QR 코드 생성기", qrDesc:"모든 링크나 텍스트를 QR 코드로 변환", invName:"청구서 생성기", invDesc:"전문적인 청구서를 PDF로 만들고 다운로드", imgName:"이미지 압축기", imgDesc:"품질 손실 없이 이미지 파일 크기 줄이기", wrdName:"단어 수 세기", wrdDesc:"단어, 문자, 문장, 읽기 시간 계산", pwdName:"비밀번호 생성기", pwdDesc:"강력한 비밀번호를 즉시 생성", unitName:"단위 변환기", unitDesc:"길이, 무게, 온도, 면적, 속도 변환", qrLbl:"URL 또는 텍스트 입력", qrPh:"https://yourwebsite.com" },
+  zh:{ badge:"免费 · 无需注册 · 无限制", h1:"选择工具，<br>完成任务。", sub:"一处汇集6款强大工具 — 支持您的语言，适用于任何设备。", qrName:"二维码生成器", qrDesc:"将任意链接或文字转换为二维码", invName:"发票生成器", invDesc:"创建并下载专业PDF发票", imgName:"图片压缩器", imgDesc:"在不明显降低质量的情况下减小图片文件大小", wrdName:"字数统计", wrdDesc:"统计单词数、字符数、句子数和阅读时间", pwdName:"密码生成器", pwdDesc:"即时生成强大安全的密码", unitName:"单位转换器", unitDesc:"转换长度、重量、温度、面积和速度", qrLbl:"输入URL或文字", qrPh:"https://yourwebsite.com" },
+  ru:{ badge:"БЕСПЛАТНО · БЕЗ РЕГИСТРАЦИИ · БЕЗ ОГРАНИЧЕНИЙ", h1:"Выберите инструмент.<br>Сделайте дело.", sub:"6 мощных инструментов в одном месте — на вашем языке, на любом устройстве.", qrName:"Генератор QR-кода", qrDesc:"Превратите любую ссылку или текст в QR-код", invName:"Генератор счетов", invDesc:"Создайте и скачайте профессиональный счет в PDF", imgName:"Компрессор изображений", imgDesc:"Уменьшите размер файла без потери качества", wrdName:"Счетчик слов", wrdDesc:"Подсчитайте слова, символы, предложения и время чтения", pwdName:"Генератор паролей", pwdDesc:"Генерируйте надежные пароли мгновенно", unitName:"Конвертер единиц", unitDesc:"Конвертируйте длину, вес, температуру, площадь и скорость", qrLbl:"Введите URL или текст", qrPh:"https://yourwebsite.com" },
+  id:{ badge:"GRATIS · TANPA DAFTAR · TANPA BATAS", h1:"Pilih Alat.<br>Selesaikan Pekerjaan.", sub:"6 alat canggih dalam satu tempat — dalam bahasa Anda, di perangkat apa pun.", qrName:"Generator QR Code", qrDesc:"Ubah tautan atau teks apa pun menjadi QR Code", invName:"Generator Faktur", invDesc:"Buat dan unduh faktur profesional dalam PDF", imgName:"Kompresor Gambar", imgDesc:"Kurangi ukuran file tanpa kehilangan kualitas", wrdName:"Penghitung Kata", wrdDesc:"Hitung kata, karakter, kalimat, dan waktu baca", pwdName:"Generator Kata Sandi", pwdDesc:"Buat kata sandi kuat secara instan", unitName:"Konverter Satuan", unitDesc:"Konversi panjang, berat, suhu, luas, dan kecepatan", qrLbl:"Masukkan URL atau teks", qrPh:"https://websiteanda.com" },
+  ar:{ badge:"مجاني · بدون تسجيل · بدون حدود", h1:"اختر أداة.<br>أنجز العمل.", sub:"6 أدوات قوية في مكان واحد — بلغتك، على أي جهاز.", qrName:"مولد رمز QR", qrDesc:"حول أي رابط أو نص إلى رمز QR قابل للمسح", invName:"مولد الفواتير", invDesc:"أنشئ وحمّل فاتورة احترافية بصيغة PDF", imgName:"ضاغط الصور", imgDesc:"قلل حجم الصورة دون فقدان الجودة", wrdName:"عداد الكلمات", wrdDesc:"عدّ الكلمات والأحرف والجمل ووقت القراءة", pwdName:"مولد كلمات المرور", pwdDesc:"أنشئ كلمات مرور قوية وآمنة فورًا", unitName:"محول الوحدات", unitDesc:"حول الطول والوزن ودرجة الحرارة والمساحة والسرعة", qrLbl:"أدخل الرابط أو النص", qrPh:"https://yourwebsite.com" },
+  tr:{ badge:"ÜCRETSİZ · KAYIT YOK · SINIR YOK", h1:"Bir araç seçin.<br>İşi bitirin.", sub:"Tek yerde 6 güçlü araç — dilinizde, her cihazda.", qrName:"QR Kod Oluşturucu", qrDesc:"Herhangi bir bağlantı veya metni QR koda dönüştürün", invName:"Fatura Oluşturucu", invDesc:"Profesyonel faturaları PDF olarak oluşturun", imgName:"Görüntü Sıkıştırıcı", imgDesc:"Kalite kaybı olmadan görüntü boyutunu azaltın", wrdName:"Kelime Sayacı", wrdDesc:"Kelime, karakter, cümle ve okuma süresini sayın", pwdName:"Şifre Oluşturucu", pwdDesc:"Güçlü şifreler anında oluşturun", unitName:"Birim Dönüştürücü", unitDesc:"Uzunluk, ağırlık, sıcaklık, alan ve hızı dönüştürün", qrLbl:"URL veya metin girin", qrPh:"https://websiteniz.com" },
+  vi:{ badge:"MIỄN PHÍ · KHÔNG ĐĂNG KÝ · KHÔNG GIỚI HẠN", h1:"Chọn công cụ.<br>Hoàn thành việc.", sub:"6 công cụ mạnh mẽ tại một nơi — bằng ngôn ngữ của bạn, trên mọi thiết bị.", qrName:"Tạo mã QR", qrDesc:"Chuyển đổi bất kỳ liên kết nào thành mã QR", invName:"Tạo hóa đơn", invDesc:"Tạo và tải xuống hóa đơn chuyên nghiệp dạng PDF", imgName:"Nén ảnh", imgDesc:"Giảm kích thước file ảnh mà không mất chất lượng", wrdName:"Đếm từ", wrdDesc:"Đếm từ, ký tự, câu và thời gian đọc", pwdName:"Tạo mật khẩu", pwdDesc:"Tạo mật khẩu mạnh, bảo mật ngay lập tức", unitName:"Chuyển đổi đơn vị", unitDesc:"Chuyển đổi độ dài, trọng lượng, nhiệt độ, diện tích và tốc độ", qrLbl:"Nhập URL hoặc văn bản", qrPh:"https://website.com" },
+  it:{ badge:"GRATIS · SENZA REGISTRAZIONE · SENZA LIMITI", h1:"Scegli uno strumento.<br>Fallo funzionare.", sub:"6 strumenti potenti in un unico posto — nella tua lingua, su qualsiasi dispositivo.", qrName:"Generatore QR Code", qrDesc:"Trasforma qualsiasi link o testo in un QR Code", invName:"Generatore di Fatture", invDesc:"Crea e scarica fatture professionali in PDF", imgName:"Compressore di Immagini", imgDesc:"Riduci le dimensioni del file senza perdere qualità", wrdName:"Contatore di Parole", wrdDesc:"Conta parole, caratteri, frasi e tempo di lettura", pwdName:"Generatore di Password", pwdDesc:"Genera password forti e sicure istantaneamente", unitName:"Convertitore di Unità", unitDesc:"Converti lunghezza, peso, temperatura, area e velocità", qrLbl:"Inserisci URL o testo", qrPh:"https://tuosito.it" }
+};
+
+// ─── i18n ──────────────────────────────────────────────────────────────────────
+const RTL = ['ar','he','fa','ur'];
+let lang = 'en';
+
+function applyLang(l) {
+  lang = l;
+  const t = T[l] || T.en;
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const k = el.dataset.t; if (t[k]) el.innerHTML = t[k];
+  });
+  document.querySelectorAll('[data-tp]').forEach(el => {
+    const k = el.dataset.tp; if (t[k]) el.placeholder = t[k];
+  });
+  document.documentElement.lang = l;
+  document.documentElement.dir = RTL.includes(l) ? 'rtl' : 'ltr';
+  document.getElementById('langPicker').value = l;
+}
+
+function detectLang() {
+  const code = (navigator.language||'en').split('-')[0].toLowerCase();
+  return T[code] ? code : 'en';
+}
+
+// ─── MODALS ────────────────────────────────────────────────────────────────────
+function open_modal(id) {
+  document.getElementById('ov-'+id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (id === 'pass') gen_pwd();
+  if (id === 'unit') set_cat('length', document.querySelector('.cat-tab'));
+}
+function close_modal(id) {
+  document.getElementById('ov-'+id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target===o) { o.classList.remove('open'); document.body.style.overflow=''; } });
+});
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o => { o.classList.remove('open'); document.body.style.overflow=''; });
+});
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ─── QR CODE ──────────────────────────────────────────────────────────────────
+let qrObj = null;
+function do_qr() {
+  const v = document.getElementById('qr-in').value.trim();
+  if (!v) { toast('⚠️ Please enter a URL or text'); return; }
+  const sz = parseInt(document.getElementById('qr-size').value);
+  const col = document.getElementById('qr-color').value;
+  const wrap = document.getElementById('qr-canvas-wrap');
+  wrap.innerHTML = '';
+  qrObj = new QRCode(wrap, { text:v, width:sz, height:sz, colorDark:col, colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H });
+  document.getElementById('qr-out').style.display = 'block';
+  toast('✅ QR Code generated!');
+}
+function dl_qr() {
+  const c = document.querySelector('#qr-canvas-wrap canvas');
+  if (!c) { toast('⚠️ Generate a QR code first'); return; }
+  const a = document.createElement('a');
+  a.download = 'qr-attoolkit.png';
+  a.href = c.toDataURL('image/png');
+  a.click();
+  toast('✅ Downloaded!');
+}
+
+// ─── INVOICE ──────────────────────────────────────────────────────────────────
+function add_row() {
+  const el = document.createElement('div');
+  el.className = 'inv-item-row';
+  el.innerHTML = `<input type="text" placeholder="Service or product">
+    <input type="number" value="1" min="1" placeholder="1">
+    <input type="number" value="" min="0" step="0.01" placeholder="0.00">
+    <button class="del-item" onclick="del_row(this)">×</button>`;
+  document.getElementById('inv-rows').appendChild(el);
+}
+function del_row(btn) {
+  const rows = document.querySelectorAll('.inv-item-row');
+  if (rows.length > 1) btn.parentElement.remove();
+  else toast('⚠️ At least one item required');
+}
+function do_invoice() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const from  = document.getElementById('i-from').value || 'Your Business';
+  const fEmail= document.getElementById('i-from-email').value;
+  const to    = document.getElementById('i-to').value || 'Client';
+  const tEmail= document.getElementById('i-to-email').value;
+  const date  = document.getElementById('i-date').value || new Date().toISOString().slice(0,10);
+  const due   = document.getElementById('i-due').value;
+  const taxPct= parseFloat(document.getElementById('i-tax').value)||0;
+  const cur   = document.getElementById('i-cur').value;
+  const notes = document.getElementById('i-notes').value;
+  const invNo = 'INV-' + Date.now().toString().slice(-6);
+
+  // Header bar
+  doc.setFillColor(16,185,129);
+  doc.rect(0,0,210,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(26); doc.setFont(undefined,'bold');
+  doc.text('INVOICE', 15, 24);
+  doc.setFontSize(10); doc.setFont(undefined,'normal');
+  doc.text(invNo, 148, 14);
+  doc.text('Date: '+date, 148, 21);
+  if (due) doc.text('Due: '+due, 148, 28);
+
+  // From / To
+  doc.setTextColor(50,50,50);
+  doc.setFontSize(9); doc.setFont(undefined,'bold');
+  doc.text('FROM', 15, 52);
+  doc.setFont(undefined,'normal'); doc.setFontSize(11);
+  doc.text(from, 15, 60);
+  if (fEmail) doc.text(fEmail, 15, 67);
+
+  doc.setFont(undefined,'bold'); doc.setFontSize(9);
+  doc.text('BILL TO', 110, 52);
+  doc.setFont(undefined,'normal'); doc.setFontSize(11);
+  doc.text(to, 110, 60);
+  if (tEmail) doc.text(tEmail, 110, 67);
+
+  // Table header
+  let y = 85;
+  doc.setFillColor(240,242,248);
+  doc.rect(14, y-7, 182, 11, 'F');
+  doc.setFont(undefined,'bold'); doc.setFontSize(9);
+  doc.setTextColor(80,80,90);
+  doc.text('DESCRIPTION', 17, y);
+  doc.text('QTY', 130, y);
+  doc.text('UNIT PRICE', 148, y);
+  doc.text('TOTAL', 178, y);
+
+  // Items
+  y += 12;
+  let subtotal = 0;
+  document.querySelectorAll('.inv-item-row').forEach((row,i) => {
+    const inp = row.querySelectorAll('input');
+    const desc = inp[0].value || 'Item';
+    const qty  = parseFloat(inp[1].value)||1;
+    const price= parseFloat(inp[2].value)||0;
+    const total= qty*price; subtotal+=total;
+    if (i%2===0) { doc.setFillColor(250,251,253); doc.rect(14,y-6,182,10,'F'); }
+    doc.setFont(undefined,'normal'); doc.setFontSize(10); doc.setTextColor(40,40,50);
+    doc.text(desc.substring(0,44), 17, y);
+    doc.text(String(qty), 133, y);
+    doc.text(cur+price.toFixed(2), 148, y);
+    doc.text(cur+total.toFixed(2), 178, y);
+    y += 12;
+  });
+
+  // Totals
+  y += 4;
+  doc.setDrawColor(210,215,230); doc.line(120,y,196,y); y+=9;
+  doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.setTextColor(80,80,90);
+  doc.text('Subtotal:', 130, y);
+  doc.text(cur+subtotal.toFixed(2), 178, y);
+  if (taxPct>0) {
+    const taxAmt = subtotal*(taxPct/100); subtotal+=taxAmt;
+    y+=9; doc.text('Tax ('+taxPct+'%):', 130, y);
+    doc.text(cur+taxAmt.toFixed(2), 178, y);
+  }
+  y+=4; doc.line(120,y,196,y); y+=10;
+  doc.setFont(undefined,'bold'); doc.setFontSize(14);
+  doc.setTextColor(16,185,129);
+  doc.text('TOTAL:', 130, y);
+  doc.text(cur+subtotal.toFixed(2), 178, y);
+
+  if (notes) {
+    y+=20;
+    doc.setFont(undefined,'bold'); doc.setFontSize(9); doc.setTextColor(80,80,90);
+    doc.text('NOTES', 15, y); y+=7;
+    doc.setFont(undefined,'normal'); doc.setFontSize(10); doc.setTextColor(50,50,60);
+    doc.text(doc.splitTextToSize(notes,180), 15, y);
+  }
+  doc.setFontSize(8); doc.setTextColor(170,170,180);
+  doc.text('Generated by AT ToolKit', 15, 287);
+
+  doc.save('invoice-'+invNo+'.pdf');
+  toast('✅ Invoice downloaded!');
+}
+
+// ─── IMAGE COMPRESSOR ─────────────────────────────────────────────────────────
+let origFile=null, origURL=null, compBlob=null;
+function load_img(input) {
+  const f = input.files[0];
+  if (!f) return;
+  if (f.size > 10*1024*1024) { toast('⚠️ File too large (max 10 MB)'); return; }
+  origFile = f;
+  const r = new FileReader();
+  r.onload = e => {
+    origURL = e.target.result;
+    document.getElementById('img-orig').src = origURL;
+    document.getElementById('orig-sz').textContent = fmtBytes(f.size);
+    document.getElementById('img-drop').style.display = 'none';
+    document.getElementById('img-controls').style.display = 'block';
+    compress_img();
+  };
+  r.readAsDataURL(f);
+}
+function img_drop(e) {
+  e.preventDefault();
+  document.getElementById('img-drop').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) load_img({files:[f]});
+}
+function compress_img() {
+  if (!origURL) return;
+  const q = document.getElementById('q-slider').value/100;
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width=img.naturalWidth; c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
+    c.toBlob(blob => {
+      compBlob = blob;
+      const url = URL.createObjectURL(blob);
+      document.getElementById('img-comp').src = url;
+      const saved = Math.max(0, ((1-blob.size/origFile.size)*100)).toFixed(0);
+      document.getElementById('comp-sz').textContent = fmtBytes(blob.size) + (saved>0 ? ' ('+saved+'% saved)' : '');
+    }, 'image/jpeg', q);
+  };
+  img.src = origURL;
+}
+function dl_img() {
+  if (!compBlob) { toast('⚠️ Compress an image first'); return; }
+  const a = document.createElement('a');
+  a.download = 'compressed-'+(origFile?.name||'image.jpg');
+  a.href = URL.createObjectURL(compBlob);
+  a.click(); toast('✅ Downloaded!');
+}
+function fmtBytes(b) {
+  if (b<1024) return b+' B';
+  if (b<1048576) return (b/1024).toFixed(1)+' KB';
+  return (b/1048576).toFixed(2)+' MB';
+}
+
+// ─── WORD COUNTER ─────────────────────────────────────────────────────────────
+function count_words() {
+  const t = document.getElementById('wrd-in').value;
+  const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+  const sentences = t.trim() ? t.split(/[.!?]+/).filter(s=>s.trim()).length : 0;
+  const paras = t.trim() ? t.split(/\n\s*\n/).filter(p=>p.trim()).length : 0;
+  document.getElementById('s-words').textContent = words.toLocaleString();
+  document.getElementById('s-chars').textContent = t.length.toLocaleString();
+  document.getElementById('s-ns').textContent = t.replace(/\s/g,'').length.toLocaleString();
+  document.getElementById('s-sent').textContent = sentences.toLocaleString();
+  document.getElementById('s-para').textContent = paras.toLocaleString();
+  document.getElementById('s-read').textContent = Math.ceil(words/200)||0;
+}
+
+// ─── PASSWORD GENERATOR ───────────────────────────────────────────────────────
+function gen_pwd() {
+  const len = parseInt(document.getElementById('pwd-len').value);
+  let chars = '';
+  if (document.getElementById('p-up').checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (document.getElementById('p-lo').checked) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (document.getElementById('p-nu').checked) chars += '0123456789';
+  if (document.getElementById('p-sy').checked) chars += '!@#$%^&*()-_=+[]{}|;:,.<>?';
+  if (!chars) { document.getElementById('p-lo').checked=true; chars='abcdefghijklmnopqrstuvwxyz'; }
+  const arr = new Uint32Array(len);
+  crypto.getRandomValues(arr);
+  const pwd = Array.from(arr, v => chars[v%chars.length]).join('');
+  document.getElementById('pwd-out').textContent = pwd;
+  // Strength
+  let sc = 0;
+  if (len>=8) sc+=20; if (len>=12) sc+=20; if (len>=16) sc+=10;
+  if (document.getElementById('p-up').checked) sc+=15;
+  if (document.getElementById('p-lo').checked) sc+=15;
+  if (document.getElementById('p-nu').checked) sc+=10;
+  if (document.getElementById('p-sy').checked) sc+=10;
+  const bar = document.getElementById('str-bar');
+  bar.style.width = sc+'%';
+  bar.style.background = sc<40?'#EF4444':sc<65?'#F59E0B':sc<80?'#3B82F6':'#10B981';
+}
+function copy_pwd() {
+  const t = document.getElementById('pwd-out').textContent;
+  if (t==='Click Generate below...') return;
+  navigator.clipboard.writeText(t).then(()=>toast('✅ Password copied!'));
+}
+
+// ─── UNIT CONVERTER ───────────────────────────────────────────────────────────
+const UNITS = {
+  length: {
+    list:['mm','cm','m','km','inch','foot','yard','mile'],
+    base:{ mm:0.001,cm:0.01,m:1,km:1000,inch:0.0254,foot:0.3048,yard:0.9144,mile:1609.344 },
+    name:{ mm:'Millimeter',cm:'Centimeter',m:'Meter',km:'Kilometer',inch:'Inch',foot:'Foot',yard:'Yard',mile:'Mile' }
+  },
+  weight: {
+    list:['mg','g','kg','tonne','oz','lb'],
+    base:{ mg:0.000001,g:0.001,kg:1,tonne:1000,oz:0.0283495,lb:0.453592 },
+    name:{ mg:'Milligram',g:'Gram',kg:'Kilogram',tonne:'Metric Ton',oz:'Ounce',lb:'Pound' }
+  },
+  temp: {
+    list:['°C','°F','K'],
+    base:null,
+    name:{ '°C':'Celsius','°F':'Fahrenheit','K':'Kelvin' }
+  },
+  area: {
+    list:['mm²','cm²','m²','km²','ft²','acre','hectare'],
+    base:{ 'mm²':1e-6,'cm²':1e-4,'m²':1,'km²':1e6,'ft²':0.092903,'acre':4046.856,'hectare':10000 },
+    name:{ 'mm²':'Sq mm','cm²':'Sq cm','m²':'Sq meter','km²':'Sq km','ft²':'Sq foot','acre':'Acre','hectare':'Hectare' }
+  },
+  speed: {
+    list:['m/s','km/h','mph','knot','ft/s'],
+    base:{ 'm/s':1,'km/h':0.277778,'mph':0.44704,'knot':0.514444,'ft/s':0.3048 },
+    name:{ 'm/s':'m/s','km/h':'km/h','mph':'mph','knot':'Knot','ft/s':'ft/s' }
+  }
+};
+let curCat = 'length';
+function set_cat(cat, btn) {
+  curCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const d = UNITS[cat];
+  document.getElementById('u-from').innerHTML = d.list.map(u=>`<option value="${u}">${d.name[u]} (${u})</option>`).join('');
+  document.getElementById('u-val').value = '';
+  document.getElementById('u-out').style.display = 'none';
+}
+function do_convert() {
+  const val = parseFloat(document.getElementById('u-val').value);
+  if (isNaN(val)) { document.getElementById('u-out').style.display='none'; return; }
+  const from = document.getElementById('u-from').value;
+  const d = UNITS[curCat];
+  let rows = '';
+  if (curCat === 'temp') {
+    let c = from==='°C'?val : from==='°F'?(val-32)*5/9 : val-273.15;
+    const all = {'°C':c,'°F':c*9/5+32,'K':c+273.15};
+    d.list.filter(u=>u!==from).forEach(u=>{
+      rows += `<div class="conv-row"><span class="conv-label">${d.name[u]}</span><span class="conv-value">${all[u].toFixed(4)} ${u}</span></div>`;
+    });
+  } else {
+    const base = val * d.base[from];
+    d.list.filter(u=>u!==from).forEach(u=>{
+      const cv = base/d.base[u];
+      const disp = (cv>999999||(cv<0.0001&&cv!==0)) ? cv.toExponential(4) : parseFloat(cv.toPrecision(7));
+      rows += `<div class="conv-row"><span class="conv-label">${d.name[u]}</span><span class="conv-value">${disp} ${u}</span></div>`;
+    });
+  }
+  const out = document.getElementById('u-out');
+  out.innerHTML = rows; out.style.display = 'block';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(function() {
+  // Set today's date on invoice
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('i-date').value = today;
+
+  // Auto-detect language
+  applyLang(detectLang());
+})();
+</script>
+</body>
+</html>
