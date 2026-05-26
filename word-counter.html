@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Word Counter — Count Words, Characters &amp; Reading Time | TempTool</title>
+  <meta name="description" content="Free online word counter. Count words, characters (with and without spaces), sentences, paragraphs and reading time instantly. No signup required.">
+  <meta name="keywords" content="word counter online free, character counter, count words online, reading time calculator, sentence counter, paragraph counter, word count tool">
+  <link rel="canonical" href="https://temptool.app/word-counter">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free Word Counter — Words, Characters &amp; Reading Time | TempTool">
+  <meta property="og:description" content="Count words, characters, sentences and reading time instantly. Free, no signup.">
+  <meta property="og:url" content="https://temptool.app/word-counter">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"Word Counter","item":"https://temptool.app/word-counter"}]},
+    {"@type":"WebApplication","name":"Free Word Counter","url":"https://temptool.app/word-counter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Count words, characters, sentences, paragraphs and reading time online for free."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I count words in a text online?","acceptedAnswer":{"@type":"Answer","text":"Paste or type your text into the box above. The word count updates in real time — no button to click. You also get characters, characters without spaces, sentences, paragraphs and estimated reading time."}},
+      {"@type":"Question","name":"How is reading time calculated?","acceptedAnswer":{"@type":"Answer","text":"Reading time is estimated based on an average reading speed of 200 words per minute. A 1000-word article takes approximately 5 minutes to read."}},
+      {"@type":"Question","name":"Does the word counter work for any language?","acceptedAnswer":{"@type":"Answer","text":"Yes. The tool counts words by splitting on whitespace, so it works for any language that uses spaces between words."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Word Counter</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(59,130,246,0.15)">📝</div>
+    <h1>Word Counter</h1>
+    <p>Count words, characters, sentences, paragraphs and reading time in real time. Paste your text and see everything instantly.</p>
+  </div>
+
+  <div class="tool-panel">
+    <textarea id="wrd-in" placeholder="Paste or type your text here..." style="min-height:200px" oninput="count_words()"></textarea>
+    <div class="stats-grid" style="margin-top:16px">
+      <div class="stat-tile"><div class="stat-num" id="s-words">0</div><div class="stat-lbl">Words</div></div>
+      <div class="stat-tile"><div class="stat-num" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
+      <div class="stat-tile"><div class="stat-num" id="s-ns">0</div><div class="stat-lbl">No Spaces</div></div>
+      <div class="stat-tile"><div class="stat-num" id="s-sent">0</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat-tile"><div class="stat-num" id="s-para">0</div><div class="stat-lbl">Paragraphs</div></div>
+      <div class="stat-tile"><div class="stat-num" id="s-read">0</div><div class="stat-lbl">Min Read</div></div>
+    </div>
+    <button class="btn btn-ghost btn-full" style="margin-top:14px" onclick="document.getElementById('wrd-in').value='';count_words()">🗑 Clear Text</button>
+  </div>
+
+  <!-- Info section -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px">Common word count targets</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">Tweet / X post</strong><br>Up to 280 characters</div>
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">LinkedIn post</strong><br>~300 words (3,000 char limit)</div>
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">Blog article</strong><br>800–2,000 words</div>
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">University essay</strong><br>500–5,000 words</div>
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">SEO content</strong><br>1,500+ words for long-form</div>
+      <div style="padding:12px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">Short story</strong><br>1,000–7,500 words</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I count words online? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Simply paste or type your text into the box above. Word count, character count, sentence count, paragraph count and reading time all update in real time — no button click needed.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How is reading time calculated? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Reading time is based on an average adult reading speed of 200 words per minute. A 400-word article takes about 2 minutes to read. This is a standard estimate used by publications like Medium.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Does it count characters with or without spaces? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Both. "Characters" shows the total count including spaces. "No Spaces" shows only non-whitespace characters. Twitter/X uses the total character count including spaces.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Is my text saved or stored anywhere? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">No. Your text never leaves your browser. Nothing is sent to any server. Close the tab and the text is gone. TempTool is completely private.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/file-converter" class="other-tool-card"><span class="ot-icon">🔄</span><span class="ot-name">File Converter</span><span class="ot-desc">PDF ↔ Image, PNG to JPG</span></a>
+      <a href="/size-compressor" class="other-tool-card"><span class="ot-icon">🗜️</span><span class="ot-name">Size Compressor</span><span class="ot-desc">Compress images &amp; PDFs</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/invoice-generator" class="other-tool-card"><span class="ot-icon">🧾</span><span class="ot-name">Invoice Generator</span><span class="ot-desc">Professional PDF invoices</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+      <a href="/unit-converter" class="other-tool-card"><span class="ot-icon">⚖️</span><span class="ot-name">Unit Converter</span><span class="ot-desc">Length, weight, temp &amp; more</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+function count_words(){
+  const t=document.getElementById('wrd-in').value;
+  const words=t.trim()?t.trim().split(/\s+/).length:0;
+  const sentences=t.trim()?t.split(/[.!?]+/).filter(s=>s.trim()).length:0;
+  const paras=t.trim()?t.split(/\n\s*\n/).filter(p=>p.trim()).length:0;
+  document.getElementById('s-words').textContent=words.toLocaleString();
+  document.getElementById('s-chars').textContent=t.length.toLocaleString();
+  document.getElementById('s-ns').textContent=t.replace(/\s/g,'').length.toLocaleString();
+  document.getElementById('s-sent').textContent=sentences.toLocaleString();
+  document.getElementById('s-para').textContent=paras.toLocaleString();
+  document.getElementById('s-read').textContent=Math.ceil(words/200)||0;
+}
+</script>
+</body>
+</html>

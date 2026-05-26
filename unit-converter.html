@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Unit Converter — Length, Weight, Temperature, Area &amp; Speed | TempTool</title>
+  <meta name="description" content="Free online unit converter. Convert length, weight, temperature, area and speed instantly. Meters to feet, kg to lbs, Celsius to Fahrenheit and more. No signup required.">
+  <meta name="keywords" content="unit converter online free, length converter, weight converter, temperature converter, meters to feet, kg to lbs, celsius to fahrenheit, mph to kmh, area converter">
+  <link rel="canonical" href="https://temptool.app/unit-converter">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free Unit Converter — Length, Weight, Temperature &amp; More | TempTool">
+  <meta property="og:description" content="Convert any unit instantly — length, weight, temperature, area, speed. Free, no signup.">
+  <meta property="og:url" content="https://temptool.app/unit-converter">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"Unit Converter","item":"https://temptool.app/unit-converter"}]},
+    {"@type":"WebApplication","name":"Free Unit Converter","url":"https://temptool.app/unit-converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert length, weight, temperature, area and speed units instantly online for free."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I convert meters to feet?","acceptedAnswer":{"@type":"Answer","text":"Select the Length category, type your value, choose Meter (m) as the From Unit, and you'll instantly see the result in Feet (ft) along with all other length units. 1 meter = 3.28084 feet."}},
+      {"@type":"Question","name":"How do I convert Celsius to Fahrenheit?","acceptedAnswer":{"@type":"Answer","text":"Select the Temp category, enter your temperature value, and choose °C as the From Unit. The converter will instantly show the equivalent in °F and Kelvin. The formula is °F = (°C × 9/5) + 32."}},
+      {"@type":"Question","name":"How do I convert kg to lbs?","acceptedAnswer":{"@type":"Answer","text":"Select the Weight category, enter your value in kilograms, and choose Kilogram (kg) as the From Unit. Results appear instantly for all units including Pounds (lb). 1 kg = 2.20462 lbs."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Unit Converter</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(139,92,246,0.15)">⚖️</div>
+    <h1>Unit Converter</h1>
+    <p>Convert length, weight, temperature, area and speed units instantly. Enter a value, pick your unit, and see all conversions at once.</p>
+  </div>
+
+  <div class="tool-panel">
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab on" onclick="set_cat('length',this)">📏 Length</button>
+      <button class="cat-tab" onclick="set_cat('weight',this)">⚖️ Weight</button>
+      <button class="cat-tab" onclick="set_cat('temp',this)">🌡️ Temp</button>
+      <button class="cat-tab" onclick="set_cat('area',this)">📐 Area</button>
+      <button class="cat-tab" onclick="set_cat('speed',this)">💨 Speed</button>
+    </div>
+    <div class="row2" style="margin-top:16px">
+      <div class="fg"><label>Value</label><input type="number" id="u-val" placeholder="Enter number" oninput="do_convert()"></div>
+      <div class="fg"><label>From Unit</label><select id="u-from" onchange="do_convert()"></select></div>
+    </div>
+    <div class="out-box" id="u-out" style="display:none;margin-top:14px"></div>
+  </div>
+
+  <!-- Quick reference -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px">Common conversions</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">📏 Length</strong><br>1 m = 3.28084 ft<br>1 mile = 1.60934 km<br>1 inch = 2.54 cm</div>
+      <div style="padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">⚖️ Weight</strong><br>1 kg = 2.20462 lb<br>1 oz = 28.3495 g<br>1 tonne = 1,000 kg</div>
+      <div style="padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">🌡️ Temperature</strong><br>°F = (°C × 9/5) + 32<br>0°C = 32°F = 273.15K<br>100°C = 212°F</div>
+      <div style="padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;font-size:13px;color:var(--text-sub)"><strong style="color:var(--text)">💨 Speed</strong><br>1 mph = 1.60934 km/h<br>1 knot = 1.852 km/h<br>1 m/s = 3.6 km/h</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I convert meters to feet? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Select the Length tab, type your value, choose Meter (m) as the From Unit. All results appear instantly — including feet, inches, yards, miles and more. 1 meter = 3.28084 feet.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I convert Celsius to Fahrenheit? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Select the Temp tab, enter your Celsius value, choose °C as the From Unit. You'll see the result in °F and Kelvin instantly. Formula: °F = (°C × 9/5) + 32. For example, 100°C = 212°F.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I convert kg to lbs? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Click the Weight tab, enter your value in kg, and select Kilogram (kg) as the From Unit. The result appears immediately. 1 kg = 2.20462 pounds.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How accurate are the conversions? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">All conversions use standard SI base units and internationally recognized conversion factors. Results are shown to 7 significant figures. For very large or very small numbers, scientific notation is used automatically.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/file-converter" class="other-tool-card"><span class="ot-icon">🔄</span><span class="ot-name">File Converter</span><span class="ot-desc">PDF ↔ Image, PNG to JPG</span></a>
+      <a href="/size-compressor" class="other-tool-card"><span class="ot-icon">🗜️</span><span class="ot-name">Size Compressor</span><span class="ot-desc">Compress images &amp; PDFs</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/invoice-generator" class="other-tool-card"><span class="ot-icon">🧾</span><span class="ot-name">Invoice Generator</span><span class="ot-desc">Professional PDF invoices</span></a>
+      <a href="/word-counter" class="other-tool-card"><span class="ot-icon">📝</span><span class="ot-name">Word Counter</span><span class="ot-desc">Words, chars, reading time</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+const UNITS = {
+  length: {
+    list:['mm','cm','m','km','inch','foot','yard','mile'],
+    base:{ mm:0.001,cm:0.01,m:1,km:1000,inch:0.0254,foot:0.3048,yard:0.9144,mile:1609.344 },
+    name:{ mm:'Millimeter',cm:'Centimeter',m:'Meter',km:'Kilometer',inch:'Inch',foot:'Foot',yard:'Yard',mile:'Mile' }
+  },
+  weight: {
+    list:['mg','g','kg','tonne','oz','lb'],
+    base:{ mg:0.000001,g:0.001,kg:1,tonne:1000,oz:0.0283495,lb:0.453592 },
+    name:{ mg:'Milligram',g:'Gram',kg:'Kilogram',tonne:'Metric Ton',oz:'Ounce',lb:'Pound' }
+  },
+  temp: {
+    list:['°C','°F','K'],
+    base:null,
+    name:{ '°C':'Celsius','°F':'Fahrenheit','K':'Kelvin' }
+  },
+  area: {
+    list:['mm²','cm²','m²','km²','ft²','acre','hectare'],
+    base:{ 'mm²':1e-6,'cm²':1e-4,'m²':1,'km²':1e6,'ft²':0.092903,'acre':4046.856,'hectare':10000 },
+    name:{ 'mm²':'Sq mm','cm²':'Sq cm','m²':'Sq meter','km²':'Sq km','ft²':'Sq foot','acre':'Acre','hectare':'Hectare' }
+  },
+  speed: {
+    list:['m/s','km/h','mph','knot','ft/s'],
+    base:{ 'm/s':1,'km/h':0.277778,'mph':0.44704,'knot':0.514444,'ft/s':0.3048 },
+    name:{ 'm/s':'m/s','km/h':'km/h','mph':'mph','knot':'Knot','ft/s':'ft/s' }
+  }
+};
+let curCat = 'length';
+function set_cat(cat, btn) {
+  curCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const d = UNITS[cat];
+  document.getElementById('u-from').innerHTML = d.list.map(u=>`<option value="${u}">${d.name[u]} (${u})</option>`).join('');
+  document.getElementById('u-val').value = '';
+  document.getElementById('u-out').style.display = 'none';
+}
+function do_convert() {
+  const val = parseFloat(document.getElementById('u-val').value);
+  if (isNaN(val)) { document.getElementById('u-out').style.display='none'; return; }
+  const from = document.getElementById('u-from').value;
+  const d = UNITS[curCat];
+  let rows = '';
+  if (curCat === 'temp') {
+    let c = from==='°C'?val : from==='°F'?(val-32)*5/9 : val-273.15;
+    const all = {'°C':c,'°F':c*9/5+32,'K':c+273.15};
+    d.list.filter(u=>u!==from).forEach(u=>{
+      rows += `<div class="conv-row"><span class="conv-label">${d.name[u]}</span><span class="conv-value">${all[u].toFixed(4)} ${u}</span></div>`;
+    });
+  } else {
+    const base = val * d.base[from];
+    d.list.filter(u=>u!==from).forEach(u=>{
+      const cv = base/d.base[u];
+      const disp = (cv>999999||(cv<0.0001&&cv!==0)) ? cv.toExponential(4) : parseFloat(cv.toPrecision(7));
+      rows += `<div class="conv-row"><span class="conv-label">${d.name[u]}</span><span class="conv-value">${disp} ${u}</span></div>`;
+    });
+  }
+  const out = document.getElementById('u-out');
+  out.innerHTML = rows; out.style.display = 'block';
+}
+// Init length category on load
+set_cat('length', document.querySelector('.cat-tab'));
+</script>
+</body>
+</html>

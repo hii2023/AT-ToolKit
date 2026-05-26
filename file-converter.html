@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free File Converter — PDF to JPG, Image to PDF, PNG to WebP | TempTool</title>
+  <meta name="description" content="Free online file converter. Convert PDF to JPG or PNG, images to PDF, PNG to JPG, JPG to WebP and more. No signup, no upload to server. Works in your browser.">
+  <meta name="keywords" content="PDF to JPG converter free, image to PDF online, PNG to JPG converter, convert PDF to image, JPG to WebP, file converter online free">
+  <link rel="canonical" href="https://temptool.app/file-converter">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free File Converter — PDF to JPG, Image to PDF | TempTool">
+  <meta property="og:description" content="Convert PDF to JPG, images to PDF, PNG to JPG or WebP. Free, no signup, runs in your browser.">
+  <meta property="og:url" content="https://temptool.app/file-converter">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"File Converter","item":"https://temptool.app/file-converter"}]},
+    {"@type":"WebApplication","name":"Free File Converter","url":"https://temptool.app/file-converter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert PDF to JPG, PNG to PDF, images between formats. Free, no signup."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I convert a PDF to JPG for free?","acceptedAnswer":{"@type":"Answer","text":"Upload your PDF to TempTool's File Converter, select 'JPG Images' from the Convert To dropdown, and click Convert. Each page becomes a separate JPG. Download individually or as a ZIP."}},
+      {"@type":"Question","name":"Can I convert multiple images to one PDF?","acceptedAnswer":{"@type":"Answer","text":"Yes. Upload multiple images (JPG, PNG, WebP), select 'PDF Document', choose A4 or Letter size, and click Convert. All images are merged into a single PDF."}},
+      {"@type":"Question","name":"How do I convert PNG to JPG online?","acceptedAnswer":{"@type":"Answer","text":"Upload your PNG, select JPG as the output, adjust quality if needed, and click Convert & Download. Multiple PNGs are downloaded as a ZIP."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>File Converter</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(236,72,153,0.15)">🔄</div>
+    <h1>File Converter</h1>
+    <p>Convert PDF to JPG or PNG, images to PDF, and switch between image formats. Upload any file — the tool detects it and shows the right options.</p>
+  </div>
+
+  <div class="tool-panel">
+    <input type="file" id="cv-file" accept="image/*,application/pdf" multiple style="display:none" onchange="cv_load(this)">
+    <div class="dropzone" id="cv-drop"
+         onclick="document.getElementById('cv-file').click()"
+         ondragover="event.preventDefault();this.classList.add('over')"
+         ondragleave="this.classList.remove('over')"
+         ondrop="cv_drop_ev(event)">
+      <div class="drop-emoji">🔄</div>
+      <div class="drop-main">Click to upload or drag &amp; drop</div>
+      <div class="drop-sub">Images (JPG · PNG · WebP · GIF) or PDF · Max 50 MB</div>
+    </div>
+
+    <div id="cv-options" style="display:none">
+      <div style="margin-top:12px;padding:10px 14px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.2);border-radius:10px;font-size:13px;color:var(--text-sub)" id="cv-file-info"></div>
+      <div class="fg" style="margin-top:14px">
+        <label>Convert to</label>
+        <select id="cv-to" onchange="cv_show_settings()"></select>
+      </div>
+      <div id="cv-settings" style="margin-top:14px"></div>
+      <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#EC4899,#DB2777);color:#fff;font-weight:700" onclick="cv_convert()">🔄 Convert &amp; Download</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:8px;font-size:13px" onclick="cv_reset()">✕ Start Over</button>
+    </div>
+
+    <div id="cv-multi" style="display:none;margin-top:12px">
+      <div id="cv-thumbs" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      <button onclick="document.getElementById('cv-file').click()" style="margin-top:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-sub);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px">+ Add more images</button>
+    </div>
+
+    <div id="cv-progress" style="display:none;margin-top:14px">
+      <div style="background:rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;height:8px">
+        <div id="cv-bar" style="height:100%;background:linear-gradient(90deg,#EC4899,#F9A8D4);width:0%;transition:width 0.3s"></div>
+      </div>
+      <div id="cv-prog-txt" style="margin-top:6px;font-size:12px;color:var(--text-sub);text-align:center"></div>
+    </div>
+
+    <div id="cv-pages" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center"></div>
+    <button id="cv-dl-all" style="display:none;margin-top:12px" class="btn btn-full" onclick="cv_dl_all()">⬇ Download All as ZIP</button>
+  </div>
+
+  <!-- How it works -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px">How to convert files</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="padding:14px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">📄 PDF → JPG or PNG</div>
+        <p style="font-size:12px;color:var(--text-sub);line-height:1.6">Upload a PDF. Select JPG or PNG as output. Each page becomes a separate image. Download individually or as a ZIP.</p>
+      </div>
+      <div style="padding:14px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🖼️ Images → PDF</div>
+        <p style="font-size:12px;color:var(--text-sub);line-height:1.6">Upload one or more images (JPG, PNG, WebP). Select PDF. Choose page size. All images are combined into one PDF.</p>
+      </div>
+      <div style="padding:14px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔄 PNG ↔ JPG ↔ WebP</div>
+        <p style="font-size:12px;color:var(--text-sub);line-height:1.6">Upload any image and convert to JPG, PNG or WebP. Adjust quality. Batch convert multiple images — downloads as ZIP.</p>
+      </div>
+      <div style="padding:14px;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.15);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔒 100% Private</div>
+        <p style="font-size:12px;color:var(--text-sub);line-height:1.6">All conversion happens inside your browser. Your files are never uploaded to any server. Close the tab and nothing is stored.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I convert a PDF to JPG for free? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Upload your PDF using the dropzone above. The tool will detect it's a PDF and show JPG and PNG as output options. Select JPG, adjust quality, and click Convert. Each page is rendered as a separate JPG image at 2x resolution. Download them one by one or all as a ZIP file.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Can I convert multiple images to a single PDF? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Yes. Upload your images — you can drag multiple files at once or use the "+ Add more images" button after the first upload. Select "PDF Document" as the output, choose your page size (Fit to image, A4, or Letter), and click Convert. All images are combined into a single PDF in the order uploaded.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I convert PNG to JPG online? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Upload your PNG, select "JPG" from the Convert To dropdown, set your quality (85% is recommended for a good balance), and click Convert & Download. For multiple PNGs, they will be packaged into a ZIP file automatically.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Is there a file size limit? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">There is no enforced server-side limit since your files never leave your browser. In practice, very large PDFs (100+ MB) may take longer to process depending on your device. Most files up to 50 MB work smoothly.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Are my files private? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Completely. All conversion runs inside your browser using JavaScript. Nothing is sent to any server. Your files are never stored. Once you close the tab, everything is gone.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/size-compressor" class="other-tool-card"><span class="ot-icon">🗜️</span><span class="ot-name">Size Compressor</span><span class="ot-desc">Compress images &amp; PDFs</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/invoice-generator" class="other-tool-card"><span class="ot-icon">🧾</span><span class="ot-name">Invoice Generator</span><span class="ot-desc">Professional PDF invoices</span></a>
+      <a href="/word-counter" class="other-tool-card"><span class="ot-icon">📝</span><span class="ot-name">Word Counter</span><span class="ot-desc">Words, chars, reading time</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+      <a href="/unit-converter" class="other-tool-card"><span class="ot-icon">⚖️</span><span class="ot-name">Unit Converter</span><span class="ot-desc">Length, weight, temp &amp; more</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+let cvFiles = [], cvPages = [];
+function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
+let toastTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+function cv_pdfjs_init(){if(window.pdfjsLib&&!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+function cv_load(input){
+  const files=Array.from(input.files);if(!files.length)return;
+  const isPdf=files[0].type==='application/pdf';
+  if(isPdf){
+    cvFiles=[files[0]];cvPages=[];
+    const f=files[0];
+    document.getElementById('cv-drop').style.display='none';
+    document.getElementById('cv-file-info').textContent=`📄 ${f.name} — ${fmtBytes(f.size)}`;
+    document.getElementById('cv-to').innerHTML='<option value="jpg">→ JPG Images</option><option value="png">→ PNG Images</option>';
+    document.getElementById('cv-options').style.display='block';
+    document.getElementById('cv-multi').style.display='none';
+    cv_show_settings();
+  } else {
+    const imgs=files.filter(f=>f.type.startsWith('image/'));
+    if(!imgs.length){toast('⚠️ Please upload images or a PDF');return;}
+    cvFiles=[...cvFiles,...imgs];
+    document.getElementById('cv-drop').style.display='none';
+    document.getElementById('cv-to').innerHTML='<option value="pdf">→ PDF Document</option><option value="jpg">→ JPG</option><option value="png">→ PNG</option><option value="webp">→ WebP</option>';
+    document.getElementById('cv-options').style.display='block';
+    cv_render_thumbs();cv_show_settings();
+  }
+}
+function cv_render_thumbs(){
+  const wrap=document.getElementById('cv-thumbs');wrap.innerHTML='';
+  cvFiles.forEach((f,idx)=>{
+    const url=URL.createObjectURL(f);
+    const div=document.createElement('div');
+    div.style.cssText='position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);flex-shrink:0';
+    div.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover"><button onclick="cv_remove_img(${idx})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.75);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:18px;text-align:center">✕</button>`;
+    wrap.appendChild(div);
+  });
+  document.getElementById('cv-multi').style.display=cvFiles.length?'block':'none';
+  document.getElementById('cv-file-info').textContent=`🖼️ ${cvFiles.length} image${cvFiles.length>1?'s':''} selected`;
+}
+function cv_remove_img(idx){cvFiles.splice(idx,1);if(!cvFiles.length){cv_reset();return;}cv_render_thumbs();}
+function cv_drop_ev(e){e.preventDefault();document.getElementById('cv-drop').classList.remove('over');cv_load({files:e.dataTransfer.files});}
+function cv_show_settings(){
+  const to=document.getElementById('cv-to').value;
+  const panel=document.getElementById('cv-settings');
+  const srcIsPdf=cvFiles.length===1&&cvFiles[0].type==='application/pdf';
+  if(!srcIsPdf&&to==='pdf'){
+    panel.innerHTML=`<div class="row2"><div class="fg"><label>Page Size</label><select id="cv-size"><option value="fit">Fit to image</option><option value="a4">A4</option><option value="letter">Letter</option></select></div><div class="fg"><label>Orientation</label><select id="cv-orient"><option value="auto">Auto</option><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div></div>`;
+  } else if(to==='png'){panel.innerHTML='';}
+  else{panel.innerHTML=`<div class="fg"><label style="display:flex;justify-content:space-between"><span>Quality</span><span id="cv-q-val" style="color:#F9A8D4;font-weight:700">85%</span></label><input type="range" id="cv-q-sl" min="10" max="100" value="85" oninput="document.getElementById('cv-q-val').textContent=this.value+'%'"></div>`;}
+}
+async function cv_convert(){
+  const to=document.getElementById('cv-to').value;
+  const srcIsPdf=cvFiles.length===1&&cvFiles[0].type==='application/pdf';
+  if(srcIsPdf)await cv_pdf_to_img(to);
+  else if(to==='pdf')await cv_imgs_to_pdf();
+  else await cv_img_to_img(to);
+}
+async function cv_imgs_to_pdf(){
+  if(!cvFiles.length){toast('⚠️ Add at least one image');return;}
+  if(!window.jspdf){toast('⚠️ jsPDF not loaded');return;}
+  const{jsPDF}=window.jspdf;
+  const pageSize=document.getElementById('cv-size')?.value||'fit';
+  const orientPref=document.getElementById('cv-orient')?.value||'auto';
+  let doc=null;toast('⏳ Converting…');
+  try{
+    for(let i=0;i<cvFiles.length;i++){
+      const dataUrl=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(cvFiles[i]);});
+      const img=await new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.src=dataUrl;});
+      const iw=img.naturalWidth,ih=img.naturalHeight;
+      const orient=orientPref==='auto'?(iw>=ih?'landscape':'portrait'):orientPref;
+      if(pageSize==='fit'){const pw=iw*25.4/96,ph=ih*25.4/96;if(i===0)doc=new jsPDF({orientation:'portrait',unit:'mm',format:[pw,ph]});else doc.addPage([pw,ph],'portrait');doc.addImage(dataUrl,'JPEG',0,0,pw,ph);}
+      else{const docFmt=pageSize==='a4'?'a4':'letter';if(i===0)doc=new jsPDF({orientation:orient,unit:'mm',format:docFmt});else doc.addPage(docFmt,orient);const pgW=doc.internal.pageSize.getWidth(),pgH=doc.internal.pageSize.getHeight();const margin=10,availW=pgW-margin*2,availH=pgH-margin*2;let dw=availW,dh=availW*ih/iw;if(dh>availH){dh=availH;dw=availH*iw/ih;}doc.addImage(dataUrl,'JPEG',(pgW-dw)/2,(pgH-dh)/2,dw,dh);}
+    }
+    const fn=cvFiles.length===1?cvFiles[0].name.replace(/\.[^.]+$/,'')+'.pdf':'images-to-pdf.pdf';
+    doc.save(fn);toast('✅ PDF downloaded!');
+  }catch(err){toast('⚠️ Conversion failed: '+err.message);}
+}
+async function cv_pdf_to_img(fmt){
+  if(!window.pdfjsLib){toast('⚠️ PDF engine not loaded');return;}
+  cv_pdfjs_init();
+  const f=cvFiles[0];
+  const quality=parseInt(document.getElementById('cv-q-sl')?.value||85)/100;
+  const mimeType=fmt==='png'?'image/png':'image/jpeg';
+  document.getElementById('cv-progress').style.display='block';
+  document.getElementById('cv-pages').innerHTML='';
+  document.getElementById('cv-dl-all').style.display='none';
+  cvPages=[];
+  try{
+    toast('⏳ Loading PDF…');
+    const buf=await f.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const n=pdf.numPages;
+    const bar=document.getElementById('cv-bar'),txt=document.getElementById('cv-prog-txt');
+    for(let i=1;i<=n;i++){
+      txt.textContent=`Converting page ${i} of ${n}…`;bar.style.width=((i-1)/n*100)+'%';
+      const page=await pdf.getPage(i);const vp=page.getViewport({scale:2.0});
+      const canvas=document.createElement('canvas');canvas.width=vp.width;canvas.height=vp.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+      const dataUrl=canvas.toDataURL(mimeType,mimeType==='image/png'?undefined:quality);
+      const ext=fmt==='png'?'png':'jpg';cvPages.push({dataUrl,page:i,ext});
+      const div=document.createElement('div');div.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;width:100px';
+      div.innerHTML=`<div style="width:100px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)"><img src="${dataUrl}" style="width:100%;display:block"></div><div style="font-size:12px;color:var(--text-sub)">Page ${i}</div><button onclick="cv_dl_one(${i-1})" style="font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(236,72,153,0.15);border:1px solid rgba(236,72,153,0.3);color:#F9A8D4;cursor:pointer;width:100%">⬇ Save</button>`;
+      document.getElementById('cv-pages').appendChild(div);bar.style.width=(i/n*100)+'%';
+    }
+    txt.textContent=`Done! ${n} page${n>1?'s':''} converted.`;
+    setTimeout(()=>{document.getElementById('cv-progress').style.display='none';},1800);
+    if(n>1)document.getElementById('cv-dl-all').style.display='';
+    toast(`✅ ${n} page${n>1?'s':''} converted!`);
+  }catch(err){document.getElementById('cv-progress').style.display='none';toast('⚠️ Failed: '+err.message);}
+}
+async function cv_img_to_img(fmt){
+  if(!cvFiles.length){toast('⚠️ No image selected');return;}
+  const mimeMap={jpg:'image/jpeg',png:'image/png',webp:'image/webp'};
+  const mime=mimeMap[fmt]||'image/jpeg';
+  const quality=parseInt(document.getElementById('cv-q-sl')?.value||85)/100;
+  toast('⏳ Converting…');
+  if(cvFiles.length===1){
+    const f=cvFiles[0];
+    const dataUrl=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
+    const img=await new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.src=dataUrl;});
+    const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);
+    c.toBlob(blob=>{const a=document.createElement('a');a.download=f.name.replace(/\.[^.]+$/,'')+'.'+fmt;a.href=URL.createObjectURL(blob);a.click();toast('✅ Converted & downloaded!');},mime,mime==='image/png'?undefined:quality);
+  }else{
+    if(!window.JSZip){toast('⚠️ JSZip not loaded');return;}
+    const zip=new JSZip();
+    for(const f of cvFiles){
+      const dataUrl=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(f);});
+      const img=await new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.src=dataUrl;});
+      const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);
+      const blob=await new Promise(res=>c.toBlob(res,mime,mime==='image/png'?undefined:quality));
+      zip.file(f.name.replace(/\.[^.]+$/,'')+'.'+fmt,blob);
+    }
+    const zipBlob=await zip.generateAsync({type:'blob'});
+    const a=document.createElement('a');a.download='converted-images.zip';a.href=URL.createObjectURL(zipBlob);a.click();toast('✅ ZIP downloaded!');
+  }
+}
+function cv_dl_one(idx){const{dataUrl,page,ext}=cvPages[idx];const a=document.createElement('a');a.download=`page-${page}.${ext}`;a.href=dataUrl;a.click();}
+async function cv_dl_all(){
+  if(!window.JSZip){toast('⚠️ JSZip not loaded');return;}
+  toast('⏳ Creating ZIP…');
+  const zip=new JSZip();
+  cvPages.forEach(({dataUrl,page,ext})=>zip.file(`page-${String(page).padStart(3,'0')}.${ext}`,dataUrl.split(',')[1],{base64:true}));
+  const blob=await zip.generateAsync({type:'blob'});
+  const a=document.createElement('a');a.download='pdf-pages.zip';a.href=URL.createObjectURL(blob);a.click();toast('✅ ZIP downloaded!');
+}
+function cv_reset(){
+  cvFiles=[];cvPages=[];
+  document.getElementById('cv-drop').style.display='';
+  document.getElementById('cv-options').style.display='none';
+  document.getElementById('cv-multi').style.display='none';
+  document.getElementById('cv-thumbs').innerHTML='';
+  document.getElementById('cv-pages').innerHTML='';
+  document.getElementById('cv-progress').style.display='none';
+  document.getElementById('cv-dl-all').style.display='none';
+  document.getElementById('cv-file').value='';
+}
+</script>
+</body>
+</html>

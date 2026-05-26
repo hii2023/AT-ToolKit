@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Size Compressor — Compress PDF, JPG, PNG Online | TempTool</title>
+  <meta name="description" content="Compress PDF files and images online for free. Reduce JPG, PNG, WebP, GIF and PDF file size instantly. No signup, runs entirely in your browser.">
+  <meta name="keywords" content="compress PDF online free, compress image online, reduce PDF size, JPG compressor, PNG compressor, WebP compressor, reduce image size free">
+  <link rel="canonical" href="https://temptool.app/size-compressor">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free Size Compressor — Compress PDF &amp; Images | TempTool">
+  <meta property="og:description" content="Compress PDFs and images free online. Reduce file size up to 80%. No signup, no server upload.">
+  <meta property="og:url" content="https://temptool.app/size-compressor">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"Size Compressor","item":"https://temptool.app/size-compressor"}]},
+    {"@type":"WebApplication","name":"Free Size Compressor","url":"https://temptool.app/size-compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compress PDF and image files free online. Reduce file size without quality loss."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I compress a PDF online for free?","acceptedAnswer":{"@type":"Answer","text":"Upload your PDF to the Size Compressor. Choose a compression level (Low, Medium or High). Click Compress & Download. Your PDF is re-rendered at a lower resolution to reduce file size — typically 40-70% smaller. Free, no signup."}},
+      {"@type":"Question","name":"How do I compress an image without losing quality?","acceptedAnswer":{"@type":"Answer","text":"Upload your image (JPG, PNG, WebP). Set the Quality slider to 80-90% for minimal visible quality loss. Use JPEG or WebP format for best compression. A 100% quality PNG compressed to 85% JPEG is typically 60-80% smaller with no visible difference."}},
+      {"@type":"Question","name":"What image formats can I compress?","acceptedAnswer":{"@type":"Answer","text":"TempTool's Size Compressor supports JPG, PNG, WebP and GIF images, plus PDF files."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Size Compressor</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(245,158,11,0.15)">🗜️</div>
+    <h1>Size Compressor</h1>
+    <p>Compress JPG, PNG, WebP, GIF images and PDF files. Reduce file size instantly — no signup, nothing uploaded to any server.</p>
+  </div>
+
+  <div class="tool-panel">
+    <input type="file" id="img-file" accept="image/*,application/pdf" style="display:none" onchange="sc_load(this)">
+    <div class="dropzone" id="img-drop"
+         onclick="document.getElementById('img-file').click()"
+         ondragover="event.preventDefault();this.classList.add('over')"
+         ondragleave="this.classList.remove('over')"
+         ondrop="sc_drop(event)">
+      <div class="drop-emoji">🗜️</div>
+      <div class="drop-main">Click to upload or drag &amp; drop</div>
+      <div class="drop-sub">JPG · PNG · WebP · GIF · PDF · Max 50 MB</div>
+    </div>
+
+    <!-- IMAGE controls -->
+    <div id="img-controls" style="display:none">
+      <div style="margin-top:12px;padding:8px 12px;background:rgba(245,158,11,0.08);border-radius:8px;font-size:13px;color:var(--text-sub)" id="sc-file-info"></div>
+      <div class="row2" style="margin-top:14px">
+        <div class="fg">
+          <label>Output Format</label>
+          <select id="img-fmt" onchange="compress_img()">
+            <option value="image/jpeg">JPEG (smaller)</option>
+            <option value="image/png">PNG (lossless)</option>
+            <option value="image/webp">WebP (best)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label style="display:flex;justify-content:space-between"><span>Quality</span><span id="q-val" style="color:#FCD34D;font-weight:700">80%</span></label>
+          <input type="range" id="q-slider" min="10" max="100" value="80" oninput="document.getElementById('q-val').textContent=this.value+'%';compress_img()">
+        </div>
+      </div>
+      <div class="fg" style="margin-top:10px">
+        <label style="display:flex;justify-content:space-between"><span>Resize dimensions</span><span id="resize-val" style="color:#FCD34D;font-weight:700">100%</span></label>
+        <input type="range" id="resize-slider" min="10" max="100" value="100" oninput="document.getElementById('resize-val').textContent=this.value+'%';compress_img()">
+      </div>
+      <div class="img-pair">
+        <div class="img-panel">
+          <img id="img-orig" src="" alt="Original">
+          <div class="img-label">Original</div>
+          <div class="img-size" id="orig-sz">—</div>
+        </div>
+        <div class="img-panel">
+          <img id="img-comp" src="" alt="Compressed">
+          <div class="img-label">Compressed</div>
+          <div class="img-size" id="comp-sz" style="color:#10B981">—</div>
+        </div>
+      </div>
+      <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700" onclick="dl_img()">⬇ Download Compressed Image</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:8px;font-size:13px" onclick="sc_reset()">✕ Start Over</button>
+    </div>
+
+    <!-- PDF controls -->
+    <div id="pdf-compress-controls" style="display:none">
+      <div style="margin-top:12px;padding:8px 12px;background:rgba(245,158,11,0.08);border-radius:8px;font-size:13px;color:var(--text-sub)" id="sc-pdf-info"></div>
+      <div class="fg" style="margin-top:14px">
+        <label style="display:flex;justify-content:space-between"><span>Compression Level</span><span id="pdf-q-val" style="color:#FCD34D;font-weight:700">Medium</span></label>
+        <input type="range" id="pdf-q-slider" min="1" max="3" value="2" step="1" oninput="sc_pdf_label(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px"><span>Low (better quality)</span><span>High (smallest size)</span></div>
+      </div>
+      <div id="pdf-compress-progress" style="display:none;margin-top:12px">
+        <div style="background:rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;height:8px">
+          <div id="pdf-compress-bar" style="height:100%;background:linear-gradient(90deg,#F59E0B,#FCD34D);width:0%;transition:width 0.3s"></div>
+        </div>
+        <div id="pdf-compress-txt" style="margin-top:6px;font-size:12px;color:var(--text-sub);text-align:center"></div>
+      </div>
+      <div id="pdf-compress-result" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;font-size:13px;color:#34D399"></div>
+      <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700" onclick="sc_compress_pdf()">⬇ Compress &amp; Download PDF</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:8px;font-size:13px" onclick="sc_reset()">✕ Start Over</button>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px">Tips for best results</h2>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:18px">💡</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6"><strong style="color:var(--text)">For images:</strong> Use JPEG or WebP format. 75-85% quality is visually identical to the original but 50-70% smaller in file size.</p></div>
+      <div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:18px">📄</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6"><strong style="color:var(--text)">For PDFs:</strong> "Medium" compression gives a good balance. "High" is best for scanned documents. Text-heavy PDFs may see smaller reductions since text is already compact.</p></div>
+      <div style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:18px">🔒</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6"><strong style="color:var(--text)">100% private:</strong> All compression runs inside your browser. Your files are never sent to any server.</p></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I compress a PDF without losing quality? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Use the "Low" compression level — it re-renders pages at a slightly lower resolution with 88% JPEG quality. For most documents, the visual difference is unnoticeable while the file size drops by 20-40%. Avoid "High" for documents you'll print or share professionally.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How much can I reduce a PDF file size? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">It depends on the content. Image-heavy PDFs (scanned documents, brochures) typically compress by 50-75%. Text-heavy PDFs compress less (10-30%) since text is already stored efficiently. Use "High" compression for the maximum reduction.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Can I compress multiple images at once? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">The Size Compressor handles one file at a time. If you need to convert between formats in bulk, use the File Converter tool which supports multiple images and packages them as a ZIP download.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Are my files private? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Yes. All compression happens inside your browser using JavaScript. Your images and PDFs are never sent to any server. Nothing is stored after you close the tab.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/file-converter" class="other-tool-card"><span class="ot-icon">🔄</span><span class="ot-name">File Converter</span><span class="ot-desc">PDF ↔ Image, PNG to JPG</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/invoice-generator" class="other-tool-card"><span class="ot-icon">🧾</span><span class="ot-name">Invoice Generator</span><span class="ot-desc">Professional PDF invoices</span></a>
+      <a href="/word-counter" class="other-tool-card"><span class="ot-icon">📝</span><span class="ot-name">Word Counter</span><span class="ot-desc">Words, chars, reading time</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+      <a href="/unit-converter" class="other-tool-card"><span class="ot-icon">⚖️</span><span class="ot-name">Unit Converter</span><span class="ot-desc">Length, weight, temp &amp; more</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+let scOrigFile=null,scOrigURL=null,scCompBlob=null,scPdfFile=null;
+function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
+let toastTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+function sc_load(input){
+  const f=input.files[0];if(!f)return;
+  if(f.size>50*1024*1024){toast('⚠️ File too large (max 50 MB)');return;}
+  document.getElementById('img-drop').style.display='none';
+  if(f.type==='application/pdf'){
+    scPdfFile=f;
+    document.getElementById('sc-pdf-info').textContent=`📄 ${f.name} — ${fmtBytes(f.size)}`;
+    document.getElementById('pdf-compress-controls').style.display='block';
+    document.getElementById('img-controls').style.display='none';
+    document.getElementById('pdf-compress-result').style.display='none';
+    document.getElementById('pdf-compress-progress').style.display='none';
+  }else{
+    scOrigFile=f;
+    const r=new FileReader();
+    r.onload=e=>{scOrigURL=e.target.result;document.getElementById('img-orig').src=scOrigURL;document.getElementById('orig-sz').textContent=fmtBytes(f.size);document.getElementById('sc-file-info').textContent=`🖼️ ${f.name} — ${fmtBytes(f.size)}`;document.getElementById('img-controls').style.display='block';document.getElementById('pdf-compress-controls').style.display='none';compress_img();};
+    r.readAsDataURL(f);
+  }
+}
+function sc_drop(e){e.preventDefault();document.getElementById('img-drop').classList.remove('over');const f=e.dataTransfer.files[0];if(f)sc_load({files:[f]});}
+function sc_reset(){
+  scOrigFile=null;scOrigURL=null;scCompBlob=null;scPdfFile=null;
+  document.getElementById('img-drop').style.display='';
+  document.getElementById('img-controls').style.display='none';
+  document.getElementById('pdf-compress-controls').style.display='none';
+  document.getElementById('pdf-compress-result').style.display='none';
+  document.getElementById('pdf-compress-progress').style.display='none';
+  document.getElementById('img-file').value='';
+  document.getElementById('img-orig').src='';document.getElementById('img-comp').src='';
+  document.getElementById('orig-sz').textContent='—';document.getElementById('comp-sz').textContent='—';
+  document.getElementById('q-slider').value=80;document.getElementById('q-val').textContent='80%';
+  document.getElementById('resize-slider').value=100;document.getElementById('resize-val').textContent='100%';
+}
+function sc_pdf_label(val){const labels={'1':'Low','2':'Medium','3':'High'};document.getElementById('pdf-q-val').textContent=labels[String(val)]||'Medium';}
+async function sc_compress_pdf(){
+  if(!scPdfFile){toast('⚠️ Upload a PDF first');return;}
+  if(!window.pdfjsLib){toast('⚠️ PDF engine not loaded');return;}
+  if(!window.jspdf){toast('⚠️ jsPDF not loaded');return;}
+  if(!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const level=parseInt(document.getElementById('pdf-q-slider').value);
+  const configs={1:{scale:1.5,quality:0.88},2:{scale:1.2,quality:0.72},3:{scale:0.9,quality:0.55}};
+  const cfg=configs[level]||configs[2];
+  const bar=document.getElementById('pdf-compress-bar'),txt=document.getElementById('pdf-compress-txt');
+  const progressDiv=document.getElementById('pdf-compress-progress'),resultDiv=document.getElementById('pdf-compress-result');
+  progressDiv.style.display='block';resultDiv.style.display='none';bar.style.width='0%';txt.textContent='Loading PDF…';
+  try{
+    const buf=await scPdfFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const n=pdf.numPages;const{jsPDF}=window.jspdf;let doc=null;
+    for(let i=1;i<=n;i++){
+      txt.textContent=`Processing page ${i} of ${n}…`;bar.style.width=((i-1)/n*100)+'%';
+      const page=await pdf.getPage(i);const vp=page.getViewport({scale:cfg.scale});
+      const canvas=document.createElement('canvas');canvas.width=vp.width;canvas.height=vp.height;
+      await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+      const dataUrl=canvas.toDataURL('image/jpeg',cfg.quality);
+      const mmW=vp.width*25.4/96,mmH=vp.height*25.4/96;
+      if(i===1)doc=new jsPDF({orientation:mmW>mmH?'landscape':'portrait',unit:'mm',format:[mmW,mmH]});
+      else doc.addPage([mmW,mmH],mmW>mmH?'landscape':'portrait');
+      doc.addImage(dataUrl,'JPEG',0,0,mmW,mmH);bar.style.width=(i/n*100)+'%';
+    }
+    txt.textContent='Saving…';const outBlob=doc.output('blob');
+    const savedPct=Math.max(0,((1-outBlob.size/scPdfFile.size)*100)).toFixed(0);
+    progressDiv.style.display='none';resultDiv.style.display='block';
+    resultDiv.textContent=`✅ ${fmtBytes(scPdfFile.size)} → ${fmtBytes(outBlob.size)}  (${savedPct}% saved)`;
+    const a=document.createElement('a');a.download='compressed-'+scPdfFile.name.replace(/\.pdf$/i,'')+'.pdf';a.href=URL.createObjectURL(outBlob);a.click();
+    toast('✅ Compressed PDF downloaded!');
+  }catch(err){progressDiv.style.display='none';toast('⚠️ Compression failed: '+err.message);}
+}
+function compress_img(){
+  if(!scOrigURL)return;
+  const q=document.getElementById('q-slider').value/100;
+  const fmt=document.getElementById('img-fmt').value;
+  const resize=document.getElementById('resize-slider').value/100;
+  const img=new Image();
+  img.onload=()=>{
+    const c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*resize);c.height=Math.round(img.naturalHeight*resize);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    c.toBlob(blob=>{scCompBlob=blob;const url=URL.createObjectURL(blob);document.getElementById('img-comp').src=url;const saved=Math.max(0,((1-blob.size/scOrigFile.size)*100)).toFixed(0);const dimInfo=resize<1?` · ${c.width}×${c.height}px`:'';document.getElementById('comp-sz').textContent=fmtBytes(blob.size)+dimInfo+(saved>0?' ('+saved+'% saved)':'');},fmt,fmt==='image/png'?undefined:q);
+  };img.src=scOrigURL;
+}
+function dl_img(){
+  if(!scCompBlob){toast('⚠️ Compress an image first');return;}
+  const fmt=document.getElementById('img-fmt').value;
+  const ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
+  const baseName=(scOrigFile?.name||'image').replace(/\.[^.]+$/,'');
+  const a=document.createElement('a');a.download='compressed-'+baseName+'.'+ext;a.href=URL.createObjectURL(scCompBlob);a.click();toast('✅ Downloaded!');
+}
+</script>
+</body>
+</html>

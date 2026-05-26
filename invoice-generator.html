@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Invoice Generator — Create &amp; Download PDF Invoices | TempTool</title>
+  <meta name="description" content="Create professional PDF invoices for free. Add your logo, client details, line items, tax and notes. Download instantly — no signup, no account required.">
+  <meta name="keywords" content="free invoice generator, invoice maker online, PDF invoice creator, create invoice free, invoice template download, professional invoice maker no signup">
+  <link rel="canonical" href="https://temptool.app/invoice-generator">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free Invoice Generator — Download PDF Invoices Instantly | TempTool">
+  <meta property="og:description" content="Create professional invoices with logo, line items, tax and notes. Download as PDF instantly. Free, no signup.">
+  <meta property="og:url" content="https://temptool.app/invoice-generator">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"Invoice Generator","item":"https://temptool.app/invoice-generator"}]},
+    {"@type":"WebApplication","name":"Free Invoice Generator","url":"https://temptool.app/invoice-generator","applicationCategory":"BusinessApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Create professional PDF invoices online for free. Add logo, client info, line items, tax and notes."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I create a free invoice?","acceptedAnswer":{"@type":"Answer","text":"Fill in your business name, client details, add line items with quantities and prices, set a tax percentage if needed, and click Download Invoice PDF. A professional PDF invoice is generated and downloaded instantly."}},
+      {"@type":"Question","name":"Can I add my logo to the invoice?","acceptedAnswer":{"@type":"Answer","text":"Yes. Click the logo upload area at the top of the form and select a PNG or JPG image. Your logo will appear in the top-left corner of the generated PDF invoice."}},
+      {"@type":"Question","name":"Are the invoices stored or saved anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. Everything runs entirely in your browser. No data is sent to any server. Close the tab and the data is gone. Download your PDF before closing."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    .inv-item-row { display:grid; grid-template-columns:1fr 70px 90px 36px; gap:6px; margin-bottom:6px; align-items:center; }
+    .inv-item-row input { margin:0; }
+    .del-item { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#EF4444; border-radius:6px; padding:0; width:30px; height:34px; cursor:pointer; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .del-item:hover { background:rgba(239,68,68,0.2); }
+    .col-heads { display:grid; grid-template-columns:1fr 70px 90px 36px; gap:6px; margin-bottom:4px; }
+    .col-head { font-size:11px; font-weight:700; color:var(--text-sub); text-transform:uppercase; letter-spacing:0.05em; padding:0 2px; }
+    .sep { height:1px; background:var(--border); margin:14px 0; }
+  </style>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Invoice Generator</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(16,185,129,0.15)">🧾</div>
+    <h1>Invoice Generator</h1>
+    <p>Create professional PDF invoices in seconds. Add your logo, itemized line items, tax and notes. Download instantly — no account needed.</p>
+  </div>
+
+  <div class="tool-panel">
+    <!-- Logo Upload -->
+    <div class="fg">
+      <label>Your Logo <span style="font-weight:400;color:var(--text-sub);font-size:12px">— optional, appears on PDF</span></label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="logo-preview-wrap" style="display:none;width:64px;height:40px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0">
+          <img id="logo-preview" style="width:100%;height:100%;object-fit:contain" alt="Logo preview">
+        </div>
+        <label style="margin:0;flex:1;cursor:pointer">
+          <div style="background:rgba(255,255,255,0.048);border:1px dashed var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text-sub);cursor:pointer;transition:all 0.2s" id="logo-drop-label">
+            📎 Click to upload logo (PNG, JPG)
+          </div>
+          <input type="file" id="i-logo" accept="image/*" style="display:none" onchange="preview_logo(this)">
+        </label>
+        <button id="logo-clear-btn" onclick="clear_logo()" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#EF4444;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap">✕ Remove</button>
+      </div>
+    </div>
+    <div class="sep"></div>
+
+    <div class="row2">
+      <div>
+        <div class="fg"><label>Your Name / Company</label><input type="text" id="i-from" placeholder="Your Business"></div>
+        <div class="fg"><label>Your Email</label><input type="email" id="i-from-email" placeholder="you@email.com"></div>
+      </div>
+      <div>
+        <div class="fg"><label>Bill To (Client)</label><input type="text" id="i-to" placeholder="Client Name"></div>
+        <div class="fg"><label>Client Email</label><input type="email" id="i-to-email" placeholder="client@email.com"></div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label>Invoice Date</label><input type="date" id="i-date"></div>
+      <div class="fg"><label>Due Date</label><input type="date" id="i-due"></div>
+    </div>
+
+    <div class="sep"></div>
+    <div class="col-heads">
+      <div class="col-head">Description</div>
+      <div class="col-head">Qty</div>
+      <div class="col-head">Price</div>
+      <div></div>
+    </div>
+    <div id="inv-rows">
+      <div class="inv-item-row">
+        <input type="text" placeholder="Service or product">
+        <input type="number" value="1" min="1" placeholder="1">
+        <input type="number" value="" min="0" step="0.01" placeholder="0.00">
+        <button class="del-item" onclick="del_row(this)">×</button>
+      </div>
+    </div>
+    <button class="btn btn-ghost" style="margin-top:8px;font-size:13px" onclick="add_row()">+ Add Item</button>
+
+    <div class="row2" style="margin-top:16px">
+      <div class="fg">
+        <label>Tax (%)</label>
+        <input type="number" id="i-tax" placeholder="0" value="0" min="0" max="100">
+      </div>
+      <div class="fg">
+        <label>Currency</label>
+        <select id="i-cur">
+          <option value="$">$ USD</option>
+          <option value="€">€ EUR</option>
+          <option value="£">£ GBP</option>
+          <option value="₹">₹ INR</option>
+          <option value="R$">R$ BRL</option>
+          <option value="¥">¥ JPY / CNY</option>
+          <option value="MX$">MX$ MXN</option>
+          <option value="Rp">Rp IDR</option>
+          <option value="₩">₩ KRW</option>
+          <option value="₺">₺ TRY</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Notes (optional)</label>
+      <textarea id="i-notes" placeholder="Payment terms, bank details, thank you note..." style="min-height:70px"></textarea>
+    </div>
+    <button class="btn btn-full" style="margin-top:6px;background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-weight:700;font-size:14px" onclick="do_invoice()">🧾 Download Invoice PDF</button>
+  </div>
+
+  <!-- Features -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px">What's included in your invoice</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">🖼️</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6;margin:0"><strong style="color:var(--text)">Your logo.</strong> Upload a PNG or JPG and it appears in the top-left of the PDF.</p></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">📋</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6;margin:0"><strong style="color:var(--text)">Line items.</strong> Add unlimited services or products with qty and price.</p></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">💰</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6;margin:0"><strong style="color:var(--text)">Tax &amp; totals.</strong> Set a tax percentage and the PDF calculates subtotal, tax and total automatically.</p></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">🌍</span><p style="font-size:13px;color:var(--text-sub);line-height:1.6;margin:0"><strong style="color:var(--text)">10 currencies.</strong> USD, EUR, GBP, INR, BRL, JPY, MXN, IDR, KRW, TRY.</p></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I create a free professional invoice? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Fill in your business name and client name, add your line items with description, quantity and price, optionally add a tax percentage, then click Download Invoice PDF. A clean, professional PDF is created and downloaded instantly — no signup needed.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Can I add my company logo? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Yes. Click the logo upload area at the top and select a PNG or JPG file. Your logo will appear in the top-left corner of the generated PDF alongside the invoice number and date.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Is my invoice data stored anywhere? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">No. The invoice is generated entirely in your browser using jsPDF. No data is sent to any server. Close the tab and the data is gone — download your PDF before closing.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How many line items can I add? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">There is no hard limit. Click "+ Add Item" as many times as needed. For very long invoices with many items, the PDF will automatically accommodate them. Note: long descriptions are truncated at 44 characters in the PDF layout.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/file-converter" class="other-tool-card"><span class="ot-icon">🔄</span><span class="ot-name">File Converter</span><span class="ot-desc">PDF ↔ Image, PNG to JPG</span></a>
+      <a href="/size-compressor" class="other-tool-card"><span class="ot-icon">🗜️</span><span class="ot-name">Size Compressor</span><span class="ot-desc">Compress images &amp; PDFs</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/word-counter" class="other-tool-card"><span class="ot-icon">📝</span><span class="ot-name">Word Counter</span><span class="ot-desc">Words, chars, reading time</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+      <a href="/unit-converter" class="other-tool-card"><span class="ot-icon">⚖️</span><span class="ot-name">Unit Converter</span><span class="ot-desc">Length, weight, temp &amp; more</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+let logoBase64 = null;
+let toastTimer;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600);}
+
+function preview_logo(input) {
+  const f = input.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    logoBase64 = e.target.result;
+    document.getElementById('logo-preview').src = logoBase64;
+    document.getElementById('logo-preview-wrap').style.display = 'block';
+    document.getElementById('logo-clear-btn').style.display = 'inline-flex';
+    document.getElementById('logo-drop-label').textContent = '✅ ' + f.name;
+  };
+  r.readAsDataURL(f);
+}
+function clear_logo() {
+  logoBase64 = null;
+  document.getElementById('i-logo').value = '';
+  document.getElementById('logo-preview-wrap').style.display = 'none';
+  document.getElementById('logo-clear-btn').style.display = 'none';
+  document.getElementById('logo-drop-label').textContent = '📎 Click to upload logo (PNG, JPG)';
+}
+function add_row() {
+  const el = document.createElement('div');
+  el.className = 'inv-item-row';
+  el.innerHTML = `<input type="text" placeholder="Service or product">
+    <input type="number" value="1" min="1" placeholder="1">
+    <input type="number" value="" min="0" step="0.01" placeholder="0.00">
+    <button class="del-item" onclick="del_row(this)">×</button>`;
+  document.getElementById('inv-rows').appendChild(el);
+}
+function del_row(btn) {
+  const rows = document.querySelectorAll('.inv-item-row');
+  if (rows.length > 1) btn.parentElement.remove();
+  else toast('⚠️ At least one item required');
+}
+function do_invoice() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const from  = document.getElementById('i-from').value || 'Your Business';
+  const fEmail= document.getElementById('i-from-email').value;
+  const to    = document.getElementById('i-to').value || 'Client';
+  const tEmail= document.getElementById('i-to-email').value;
+  const date  = document.getElementById('i-date').value || new Date().toISOString().slice(0,10);
+  const due   = document.getElementById('i-due').value;
+  const taxPct= parseFloat(document.getElementById('i-tax').value)||0;
+  const cur   = document.getElementById('i-cur').value;
+  const notes = document.getElementById('i-notes').value;
+  const invNo = 'INV-' + Date.now().toString().slice(-6);
+
+  // Header bar
+  doc.setFillColor(16,185,129);
+  doc.rect(0,0,210,38,'F');
+  doc.setTextColor(255,255,255);
+  if (logoBase64) {
+    try { doc.addImage(logoBase64, 10, 6, 36, 26); } catch(e) {}
+    doc.setFontSize(11); doc.setFont(undefined,'bold');
+    doc.text('INVOICE', 52, 24);
+  } else {
+    doc.setFontSize(26); doc.setFont(undefined,'bold');
+    doc.text('INVOICE', 15, 24);
+  }
+  doc.setFontSize(10); doc.setFont(undefined,'normal');
+  doc.text(invNo, 148, 14);
+  doc.text('Date: '+date, 148, 21);
+  if (due) doc.text('Due: '+due, 148, 28);
+
+  // From / To
+  doc.setTextColor(50,50,50);
+  doc.setFontSize(9); doc.setFont(undefined,'bold');
+  doc.text('FROM', 15, 52);
+  doc.setFont(undefined,'normal'); doc.setFontSize(11);
+  doc.text(from, 15, 60);
+  if (fEmail) doc.text(fEmail, 15, 67);
+
+  doc.setFont(undefined,'bold'); doc.setFontSize(9);
+  doc.text('BILL TO', 110, 52);
+  doc.setFont(undefined,'normal'); doc.setFontSize(11);
+  doc.text(to, 110, 60);
+  if (tEmail) doc.text(tEmail, 110, 67);
+
+  // Table header
+  let y = 85;
+  doc.setFillColor(240,242,248);
+  doc.rect(14, y-7, 182, 11, 'F');
+  doc.setFont(undefined,'bold'); doc.setFontSize(9);
+  doc.setTextColor(80,80,90);
+  doc.text('DESCRIPTION', 17, y);
+  doc.text('QTY', 130, y);
+  doc.text('UNIT PRICE', 148, y);
+  doc.text('TOTAL', 178, y);
+
+  // Items
+  y += 12;
+  let subtotal = 0;
+  document.querySelectorAll('.inv-item-row').forEach((row,i) => {
+    const inp = row.querySelectorAll('input');
+    const desc = inp[0].value || 'Item';
+    const qty  = parseFloat(inp[1].value)||1;
+    const price= parseFloat(inp[2].value)||0;
+    const total= qty*price; subtotal+=total;
+    if (i%2===0) { doc.setFillColor(250,251,253); doc.rect(14,y-6,182,10,'F'); }
+    doc.setFont(undefined,'normal'); doc.setFontSize(10); doc.setTextColor(40,40,50);
+    doc.text(desc.substring(0,44), 17, y);
+    doc.text(String(qty), 133, y);
+    doc.text(cur+price.toFixed(2), 148, y);
+    doc.text(cur+total.toFixed(2), 178, y);
+    y += 12;
+  });
+
+  // Totals
+  y += 4;
+  doc.setDrawColor(210,215,230); doc.line(120,y,196,y); y+=9;
+  doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.setTextColor(80,80,90);
+  doc.text('Subtotal:', 130, y);
+  doc.text(cur+subtotal.toFixed(2), 178, y);
+  if (taxPct>0) {
+    const taxAmt = subtotal*(taxPct/100); subtotal+=taxAmt;
+    y+=9; doc.text('Tax ('+taxPct+'%):', 130, y);
+    doc.text(cur+taxAmt.toFixed(2), 178, y);
+  }
+  y+=4; doc.line(120,y,196,y); y+=10;
+  doc.setFont(undefined,'bold'); doc.setFontSize(14);
+  doc.setTextColor(16,185,129);
+  doc.text('TOTAL:', 130, y);
+  doc.text(cur+subtotal.toFixed(2), 178, y);
+
+  if (notes) {
+    y+=20;
+    doc.setFont(undefined,'bold'); doc.setFontSize(9); doc.setTextColor(80,80,90);
+    doc.text('NOTES', 15, y); y+=7;
+    doc.setFont(undefined,'normal'); doc.setFontSize(10); doc.setTextColor(50,50,60);
+    doc.text(doc.splitTextToSize(notes,180), 15, y);
+  }
+  doc.setFontSize(8); doc.setTextColor(170,170,180);
+  doc.text('Generated by TempTool — temptool.app', 15, 287);
+
+  doc.save('invoice-'+invNo+'.pdf');
+  toast('✅ Invoice downloaded!');
+}
+
+// Set today's date
+const today = new Date().toISOString().slice(0,10);
+document.getElementById('i-date').value = today;
+</script>
+</body>
+</html>
