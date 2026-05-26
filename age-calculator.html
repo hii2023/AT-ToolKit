@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Age Calculator — Person, Relationship, Business &amp; Item Age | TempTool</title>
+  <meta name="description" content="Calculate exact age in years, months and days. Works for people, relationships, businesses and items. Enter a start date and get total days, weeks, months, hours and next anniversary. Free, no signup.">
+  <meta name="keywords" content="age calculator, how old am I, date difference calculator, relationship age calculator, business age calculator, days between dates, birthday calculator, anniversary calculator">
+  <link rel="canonical" href="https://temptool.app/age-calculator">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <meta property="og:title" content="Free Age Calculator — Person, Relationship, Business &amp; Item | TempTool">
+  <meta property="og:description" content="Calculate exact age in years, months and days. Works for people, relationships, businesses and items. Free, no signup.">
+  <meta property="og:url" content="https://temptool.app/age-calculator">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://temptool.app/assets/logo-original.png">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TempTool","item":"https://temptool.app/"},{"@type":"ListItem","position":2,"name":"Age Calculator","item":"https://temptool.app/age-calculator"}]},
+    {"@type":"WebApplication","name":"Free Age Calculator","url":"https://temptool.app/age-calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate exact age in years, months and days for people, relationships, businesses and items."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"How do I calculate my exact age?","acceptedAnswer":{"@type":"Answer","text":"Enter your date of birth in the Start Date field (today's date is already set as the end date). The calculator instantly shows your exact age in years, months and days, plus total days, weeks, months and hours lived."}},
+      {"@type":"Question","name":"How do I calculate how long I have been in a relationship?","acceptedAnswer":{"@type":"Answer","text":"Switch to the Relationship tab, enter your relationship start date, and the calculator shows exactly how many years, months and days you have been together. It also shows your next anniversary date."}},
+      {"@type":"Question","name":"How do I find the number of days between two dates?","acceptedAnswer":{"@type":"Answer","text":"Enter any start date and end date (defaults to today). The calculator shows the exact number of days, weeks, months and years between the two dates instantly."}}
+    ]}
+  ]}
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CCYD4XGGT"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-9CCYD4XGGT');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shared.css">
+  <style>
+    .ac-headline {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+    .ac-headline .age-main {
+      font-size: clamp(1.5rem, 5vw, 2.1rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .ac-headline .age-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+    .ac-next {
+      margin-top: 14px;
+      background: rgba(14,165,233,0.07);
+      border: 1px solid rgba(14,165,233,0.18);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .ac-next strong { color: var(--text); }
+    .ac-error {
+      margin-top: 14px;
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 13px;
+      color: #F87171;
+      text-align: center;
+    }
+    /* Bigger stats grid for age — 4 columns */
+    .stats-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+    @media (max-width: 520px) {
+      .stats-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    .ac-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<header>
+  <a href="/" class="logo">
+    <div class="logo-mark"><img src="/assets/logo.png" alt="TempTool logo"></div>
+    <span class="logo-name">temp<em>tool</em></span>
+  </a>
+  <a href="/" class="back-btn">← All Tools</a>
+</header>
+
+<main>
+  <nav class="breadcrumb"><a href="/">Home</a> <span>›</span> <span>Age Calculator</span></nav>
+
+  <div class="tool-page-hero">
+    <div class="tool-page-icon" style="background:rgba(14,165,233,0.15)">⏳</div>
+    <h1>Age Calculator</h1>
+    <p>Find the exact age of a person, relationship, business or item. Enter a start date and get years, months, days, and more — instantly.</p>
+  </div>
+
+  <div class="tool-panel">
+    <!-- Mode tabs -->
+    <div class="cat-tabs">
+      <button class="cat-tab on" onclick="set_mode('person',this)">👤 Person</button>
+      <button class="cat-tab" onclick="set_mode('relationship',this)">💑 Relationship</button>
+      <button class="cat-tab" onclick="set_mode('business',this)">🏢 Business</button>
+      <button class="cat-tab" onclick="set_mode('item',this)">📦 Item</button>
+    </div>
+
+    <!-- Inputs -->
+    <div class="row2">
+      <div class="fg">
+        <label id="start-label">Date of Birth</label>
+        <input type="date" id="ac-start" oninput="calc_age()">
+      </div>
+      <div class="fg">
+        <label>As of Date</label>
+        <input type="date" id="ac-end" oninput="calc_age()">
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div id="ac-error" class="ac-error" style="display:none">⚠️ Start date must be before end date.</div>
+
+    <!-- Result -->
+    <div id="ac-result" style="display:none">
+      <div class="ac-divider"></div>
+
+      <!-- Main age text -->
+      <div class="ac-headline">
+        <div class="age-main" id="ac-main-text"></div>
+        <div class="age-sub" id="ac-sub-text"></div>
+      </div>
+
+      <!-- Stat tiles: total days / weeks / months / hours -->
+      <div class="stats-grid-4">
+        <div class="stat-tile">
+          <div class="stat-num" id="ac-days">—</div>
+          <div class="stat-lbl">Total Days</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="ac-weeks">—</div>
+          <div class="stat-lbl">Total Weeks</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="ac-months">—</div>
+          <div class="stat-lbl">Total Months</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num" id="ac-hours">—</div>
+          <div class="stat-lbl">Total Hours</div>
+        </div>
+      </div>
+
+      <!-- Next birthday / anniversary -->
+      <div id="ac-next" class="ac-next" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Examples section -->
+  <section style="margin-top:40px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+    <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px">What can you calculate?</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="padding:14px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:12px;font-size:13px;color:var(--text-sub);line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">👤 Person</strong>
+        Exact age in years, months and days. Total days lived, hours and next birthday countdown.
+      </div>
+      <div style="padding:14px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:12px;font-size:13px;color:var(--text-sub);line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">💑 Relationship</strong>
+        How long you have been together. Total days, weeks, months and next anniversary date.
+      </div>
+      <div style="padding:14px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:12px;font-size:13px;color:var(--text-sub);line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">🏢 Business</strong>
+        Days since opening, total months in operation and next business anniversary.
+      </div>
+      <div style="padding:14px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:12px;font-size:13px;color:var(--text-sub);line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:4px">📦 Item</strong>
+        Age of any purchase, device, vehicle or asset since its purchase or creation date.
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" itemscope itemtype="https://schema.org/FAQPage">
+    <h2>Frequently Asked Questions</h2>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I calculate my exact age? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Select the Person tab, enter your date of birth in the Start Date field. Today's date is already set as the end date. Your exact age appears instantly — in years, months and days, plus total days lived and next birthday countdown.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How do I calculate relationship duration? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Switch to the Relationship tab and enter your relationship start date. The calculator shows exactly how many years, months and days you have been together, plus your total days and next anniversary date.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">Can I calculate the age as of a past or future date? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">Yes. The "As of Date" field defaults to today but you can change it to any date. This lets you calculate age at a specific point in the past or future.</span></div>
+    </details>
+    <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <summary itemprop="name">How is the age calculated exactly? <span class="faq-plus">+</span></summary>
+      <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><span itemprop="text">The calculator counts full calendar years, then remaining full months, then remaining days. This is how most countries legally define age. Total days counts the exact number of days between the two dates.</span></div>
+    </details>
+  </section>
+
+  <!-- Other Tools -->
+  <section class="other-tools">
+    <h2>More free tools</h2>
+    <div class="other-tools-grid">
+      <a href="/size-compressor" class="other-tool-card"><span class="ot-icon">🗜️</span><span class="ot-name">Size Compressor</span><span class="ot-desc">Compress images &amp; PDFs</span></a>
+      <a href="/file-converter" class="other-tool-card"><span class="ot-icon">🔄</span><span class="ot-name">File Converter</span><span class="ot-desc">PDF ↔ Image, PNG to JPG</span></a>
+      <a href="/qr-code-generator" class="other-tool-card"><span class="ot-icon">🔲</span><span class="ot-name">QR Code Generator</span><span class="ot-desc">URL or text to QR code</span></a>
+      <a href="/invoice-generator" class="other-tool-card"><span class="ot-icon">🧾</span><span class="ot-name">Invoice Generator</span><span class="ot-desc">Professional PDF invoices</span></a>
+      <a href="/word-counter" class="other-tool-card"><span class="ot-icon">📝</span><span class="ot-name">Word Counter</span><span class="ot-desc">Words, chars, reading time</span></a>
+      <a href="/password-generator" class="other-tool-card"><span class="ot-icon">🔐</span><span class="ot-name">Password Generator</span><span class="ot-desc">Strong random passwords</span></a>
+      <a href="/unit-converter" class="other-tool-card"><span class="ot-icon">⚖️</span><span class="ot-name">Unit Converter</span><span class="ot-desc">Length, weight, temp &amp; more</span></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">TempTool</a> &nbsp;·&nbsp; <a href="/">All Tools</a> &nbsp;·&nbsp; Free forever, for everyone</p>
+  <p style="margin-top:6px;font-size:11px;color:#2D3550">© 2026 TempTool. All rights reserved.</p>
+</footer>
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+const MODES = {
+  person:       { startLabel: 'Date of Birth',          suffix: 'old',         nextLabel: '🎂 Next birthday',   nextIcon: '🎂' },
+  relationship: { startLabel: 'Relationship Start Date', suffix: 'together',    nextLabel: '💑 Next anniversary', nextIcon: '💑' },
+  business:     { startLabel: 'Founded / Opened Date',  suffix: 'in business', nextLabel: '🏢 Next anniversary', nextIcon: '🏢' },
+  item:         { startLabel: 'Purchase / Creation Date',suffix: 'old',         nextLabel: null,                  nextIcon: null }
+};
+
+let curMode = 'person';
+
+function set_mode(mode, btn) {
+  curMode = mode;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  document.getElementById('start-label').textContent = MODES[mode].startLabel;
+  calc_age();
+}
+
+function fmt_date(d) {
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function plural(n, word) {
+  return n + ' ' + word + (n !== 1 ? 's' : '');
+}
+
+function calc_age() {
+  const startVal = document.getElementById('ac-start').value;
+  const endVal   = document.getElementById('ac-end').value;
+
+  const errEl    = document.getElementById('ac-error');
+  const resultEl = document.getElementById('ac-result');
+
+  if (!startVal || !endVal) {
+    errEl.style.display = 'none';
+    resultEl.style.display = 'none';
+    return;
+  }
+
+  // Parse as local dates to avoid timezone shifts
+  const [sy, sm, sd] = startVal.split('-').map(Number);
+  const [ey, em, ed] = endVal.split('-').map(Number);
+  const start = new Date(sy, sm - 1, sd);
+  const end   = new Date(ey, em - 1, ed);
+
+  if (start >= end) {
+    errEl.style.display = 'block';
+    resultEl.style.display = 'none';
+    return;
+  }
+
+  errEl.style.display = 'none';
+
+  // Calculate years, months, days
+  let years  = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth()    - start.getMonth();
+  let days   = end.getDate()     - start.getDate();
+
+  if (days < 0) {
+    months--;
+    const prevMonthEnd = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += prevMonthEnd.getDate();
+  }
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  // Totals
+  const totalDays   = Math.floor((end - start) / 86400000);
+  const totalWeeks  = Math.floor(totalDays / 7);
+  const totalMonths = years * 12 + months;
+  const totalHours  = totalDays * 24;
+
+  // Main text
+  const parts = [];
+  if (years > 0)  parts.push(plural(years, 'year'));
+  if (months > 0) parts.push(plural(months, 'month'));
+  parts.push(plural(days, 'day'));
+
+  const mode = MODES[curMode];
+  document.getElementById('ac-main-text').textContent = parts.join(', ') + ' ' + mode.suffix;
+  document.getElementById('ac-sub-text').textContent  = 'From ' + fmt_date(start) + ' to ' + fmt_date(end);
+
+  // Stats
+  document.getElementById('ac-days').textContent   = totalDays.toLocaleString();
+  document.getElementById('ac-weeks').textContent  = totalWeeks.toLocaleString();
+  document.getElementById('ac-months').textContent = totalMonths.toLocaleString();
+  document.getElementById('ac-hours').textContent  = totalHours.toLocaleString();
+
+  // Next birthday / anniversary
+  const nextEl = document.getElementById('ac-next');
+  if (mode.nextLabel) {
+    // Find next occurrence (same month/day as start, on or after end)
+    let nextYear = end.getFullYear();
+    const anniv  = new Date(nextYear, start.getMonth(), start.getDate());
+    if (anniv <= end) anniv.setFullYear(nextYear + 1);
+
+    const daysUntil = Math.round((anniv - end) / 86400000);
+    const ordinal   = anniv.getFullYear() - start.getFullYear();
+    const ordText   = ordinal === 1 ? '1st' : ordinal === 2 ? '2nd' : ordinal === 3 ? '3rd' : ordinal + 'th';
+
+    let msg = `${mode.nextIcon} <strong>${mode.nextLabel}:</strong> `;
+    if (daysUntil === 0) {
+      msg += `<strong>Today!</strong> (${fmt_date(anniv)})`;
+    } else if (daysUntil === 1) {
+      msg += `<strong>Tomorrow!</strong> (${fmt_date(anniv)})`;
+    } else {
+      msg += `in <strong>${daysUntil.toLocaleString()} days</strong> — ${fmt_date(anniv)}`;
+      if (curMode !== 'person') msg += ` &nbsp;·&nbsp; ${ordText} anniversary`;
+    }
+    nextEl.innerHTML = msg;
+    nextEl.style.display = 'block';
+  } else {
+    nextEl.style.display = 'none';
+  }
+
+  resultEl.style.display = 'block';
+}
+
+// Init: set today as end date
+const today = new Date();
+const pad = n => String(n).padStart(2, '0');
+const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+document.getElementById('ac-end').value = todayStr;
+</script>
+</body>
+</html>
