@@ -52,6 +52,8 @@
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
     /* ===== DESIGN TOKENS ===== */
@@ -698,6 +700,22 @@
       <div class="card-cta" style="color:#A78BFA">Convert</div>
     </div>
 
+    <!-- Row 4 — Image to PDF -->
+    <div class="tool-card" style="--c:#EC4899;--c-bg:rgba(236,72,153,0.12)" onclick="open_modal('img2pdf')">
+      <div class="card-icon">📄</div>
+      <div class="card-name">Image to PDF</div>
+      <div class="card-desc">Convert one or multiple images into a single PDF file</div>
+      <div class="card-cta" style="color:#F9A8D4">Convert</div>
+    </div>
+
+    <!-- Row 4 — PDF to Image -->
+    <div class="tool-card" style="--c:#14B8A6;--c-bg:rgba(20,184,166,0.12)" onclick="open_modal('pdf2img')">
+      <div class="card-icon">🖼️</div>
+      <div class="card-name">PDF to Image</div>
+      <div class="card-desc">Convert PDF pages into high-quality PNG or JPG images</div>
+      <div class="card-cta" style="color:#5EEAD4">Convert</div>
+    </div>
+
   </div>
 
   <!-- ═══ BOTTOM AD UNIT — uncomment after AdSense approval ═══
@@ -882,13 +900,31 @@
         <div class="drop-sub">JPG, PNG, WebP · Max 10 MB</div>
       </div>
       <div id="img-controls" style="display:none">
-        <div class="fg" style="margin-top:18px">
+        <div class="row2" style="margin-top:16px">
+          <div class="fg">
+            <label>Output Format</label>
+            <select id="img-fmt" onchange="compress_img()">
+              <option value="image/jpeg">JPEG (smaller)</option>
+              <option value="image/png">PNG (lossless)</option>
+              <option value="image/webp">WebP (best)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label style="display:flex;justify-content:space-between">
+              <span>Quality</span>
+              <span id="q-val" style="color:#FCD34D;font-weight:700">80%</span>
+            </label>
+            <input type="range" id="q-slider" min="10" max="100" value="80"
+                   oninput="document.getElementById('q-val').textContent=this.value+'%';compress_img()">
+          </div>
+        </div>
+        <div class="fg" style="margin-top:10px">
           <label style="display:flex;justify-content:space-between">
-            <span>Quality</span>
-            <span id="q-val" style="color:#FCD34D;font-weight:700">80%</span>
+            <span>Resize</span>
+            <span id="resize-val" style="color:#FCD34D;font-weight:700">100%</span>
           </label>
-          <input type="range" id="q-slider" min="10" max="100" value="80"
-                 oninput="document.getElementById('q-val').textContent=this.value+'%';compress_img()">
+          <input type="range" id="resize-slider" min="10" max="100" value="100"
+                 oninput="document.getElementById('resize-val').textContent=this.value+'%';compress_img()">
         </div>
         <div class="img-pair">
           <div class="img-panel">
@@ -898,11 +934,11 @@
           </div>
           <div class="img-panel">
             <img id="img-comp" src="" alt="Compressed">
-            <div class="img-label">Compressed</div>
+            <div class="img-label">Output</div>
             <div class="img-size" id="comp-sz" style="color:#10B981">—</div>
           </div>
         </div>
-        <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700" onclick="dl_img()">⬇ Download Compressed Image</button>
+        <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:700" onclick="dl_img()">⬇ Download Image</button>
       </div>
     </div>
   </div>
@@ -1003,6 +1039,123 @@
         <div class="fg"><label>From Unit</label><select id="u-from" onchange="do_convert()"></select></div>
       </div>
       <div class="out-box" id="u-out" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: IMAGE TO PDF
+========================================================= -->
+<div class="overlay" id="ov-img2pdf">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(236,72,153,0.15)">📄</div>
+        <span class="modal-title">Image to PDF</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('img2pdf');i2p_reset()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="file" id="i2p-file" accept="image/*" multiple style="display:none" onchange="i2p_load(this)">
+      <div class="dropzone" id="i2p-drop"
+           onclick="document.getElementById('i2p-file').click()"
+           ondragover="event.preventDefault();this.classList.add('over')"
+           ondragleave="this.classList.remove('over')"
+           ondrop="i2p_drop_ev(event)">
+        <div class="drop-emoji">📄</div>
+        <div class="drop-main">Click to upload or drag &amp; drop</div>
+        <div class="drop-sub">JPG · PNG · WebP · Multiple files OK</div>
+      </div>
+      <div id="i2p-controls" style="display:none">
+        <div id="i2p-thumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"></div>
+        <button onclick="document.getElementById('i2p-file').click()" style="margin-top:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-sub);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px">+ Add more images</button>
+        <div class="row2" style="margin-top:14px">
+          <div class="fg">
+            <label>Page Size</label>
+            <select id="i2p-size">
+              <option value="a4">A4 (210×297mm)</option>
+              <option value="letter">Letter (8.5×11in)</option>
+              <option value="fit">Fit to Image</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Orientation</label>
+            <select id="i2p-orient">
+              <option value="auto">Auto</option>
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:8px">
+          <label>Margin</label>
+          <select id="i2p-margin">
+            <option value="0">None</option>
+            <option value="10" selected>Small (10mm)</option>
+            <option value="20">Normal (20mm)</option>
+          </select>
+        </div>
+        <div id="i2p-info" style="margin-top:8px;font-size:13px;color:var(--text-sub)"></div>
+        <button class="btn btn-full" style="margin-top:14px;background:linear-gradient(135deg,#EC4899,#DB2777);color:#fff;font-weight:700" onclick="i2p_convert()">📄 Convert to PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     MODAL: PDF TO IMAGE
+========================================================= -->
+<div class="overlay" id="ov-pdf2img">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title-wrap">
+        <div class="modal-icon" style="background:rgba(20,184,166,0.15)">🖼️</div>
+        <span class="modal-title">PDF to Image</span>
+      </div>
+      <button class="close-btn" onclick="close_modal('pdf2img');p2i_reset()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="file" id="p2i-file" accept="application/pdf" style="display:none" onchange="p2i_load(this)">
+      <div class="dropzone" id="p2i-drop"
+           onclick="document.getElementById('p2i-file').click()"
+           ondragover="event.preventDefault();this.classList.add('over')"
+           ondragleave="this.classList.remove('over')"
+           ondrop="p2i_drop_ev(event)">
+        <div class="drop-emoji">📑</div>
+        <div class="drop-main">Click to upload PDF or drag &amp; drop</div>
+        <div class="drop-sub">PDF · Max 50 MB</div>
+      </div>
+      <div id="p2i-controls" style="display:none">
+        <div class="row2" style="margin-top:14px">
+          <div class="fg">
+            <label>Output Format</label>
+            <select id="p2i-fmt">
+              <option value="image/png">PNG (best quality)</option>
+              <option value="image/jpeg">JPEG (smaller size)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label style="display:flex;justify-content:space-between">
+              <span>Quality (JPEG)</span>
+              <span id="p2i-q-val" style="color:#5EEAD4;font-weight:700">90%</span>
+            </label>
+            <input type="range" id="p2i-q" min="50" max="100" value="90"
+                   oninput="document.getElementById('p2i-q-val').textContent=this.value+'%'">
+          </div>
+        </div>
+        <div id="p2i-info" style="margin-top:8px;font-size:13px;color:var(--text-sub)"></div>
+        <button class="btn btn-full" style="margin-top:12px;background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;font-weight:700" onclick="p2i_convert()">🖼️ Convert Pages to Images</button>
+        <div id="p2i-progress" style="display:none;margin-top:12px">
+          <div style="background:rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;height:8px">
+            <div id="p2i-bar" style="height:100%;background:linear-gradient(90deg,#14B8A6,#5EEAD4);width:0%;transition:width 0.3s ease"></div>
+          </div>
+          <div id="p2i-prog-txt" style="margin-top:6px;font-size:12px;color:var(--text-sub);text-align:center"></div>
+        </div>
+        <div id="p2i-pages" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center"></div>
+        <button id="p2i-dl-all" style="display:none;margin-top:14px" class="btn btn-full" onclick="p2i_dl_all()">⬇ Download All Pages as ZIP</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1254,28 +1407,213 @@ function img_drop(e) {
 }
 function compress_img() {
   if (!origURL) return;
-  const q = document.getElementById('q-slider').value/100;
+  const q = document.getElementById('q-slider').value / 100;
+  const fmt = document.getElementById('img-fmt').value;
+  const resize = document.getElementById('resize-slider').value / 100;
   const img = new Image();
   img.onload = () => {
     const c = document.createElement('canvas');
-    c.width=img.naturalWidth; c.height=img.naturalHeight;
-    c.getContext('2d').drawImage(img,0,0);
+    c.width = Math.round(img.naturalWidth * resize);
+    c.height = Math.round(img.naturalHeight * resize);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
     c.toBlob(blob => {
       compBlob = blob;
       const url = URL.createObjectURL(blob);
       document.getElementById('img-comp').src = url;
-      const saved = Math.max(0, ((1-blob.size/origFile.size)*100)).toFixed(0);
-      document.getElementById('comp-sz').textContent = fmtBytes(blob.size) + (saved>0 ? ' ('+saved+'% saved)' : '');
-    }, 'image/jpeg', q);
+      const saved = Math.max(0, ((1 - blob.size / origFile.size) * 100)).toFixed(0);
+      const dimInfo = resize < 1 ? ` · ${c.width}×${c.height}px` : '';
+      document.getElementById('comp-sz').textContent = fmtBytes(blob.size) + dimInfo + (saved > 0 ? ' (' + saved + '% saved)' : '');
+    }, fmt, fmt === 'image/png' ? undefined : q);
   };
   img.src = origURL;
 }
 function dl_img() {
   if (!compBlob) { toast('⚠️ Compress an image first'); return; }
+  const fmt = document.getElementById('img-fmt').value;
+  const ext = fmt === 'image/png' ? 'png' : fmt === 'image/webp' ? 'webp' : 'jpg';
+  const baseName = (origFile?.name || 'image').replace(/\.[^.]+$/, '');
   const a = document.createElement('a');
-  a.download = 'compressed-'+(origFile?.name||'image.jpg');
+  a.download = 'compressed-' + baseName + '.' + ext;
   a.href = URL.createObjectURL(compBlob);
   a.click(); toast('✅ Downloaded!');
+}
+
+// ─── IMAGE TO PDF ──────────────────────────────────────────────────────────────
+let i2pFiles = [];
+function i2p_load(input) {
+  const files = Array.from(input.files).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  i2pFiles = [...i2pFiles, ...files];
+  i2p_render();
+}
+function i2p_drop_ev(e) {
+  e.preventDefault();
+  document.getElementById('i2p-drop').classList.remove('over');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  i2pFiles = [...i2pFiles, ...files];
+  i2p_render();
+}
+function i2p_render() {
+  const wrap = document.getElementById('i2p-thumbs');
+  wrap.innerHTML = '';
+  i2pFiles.forEach((f, idx) => {
+    const url = URL.createObjectURL(f);
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);flex-shrink:0';
+    div.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover">
+      <button onclick="i2p_remove(${idx})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.75);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:18px;text-align:center">✕</button>`;
+    wrap.appendChild(div);
+  });
+  const hasFiles = i2pFiles.length > 0;
+  document.getElementById('i2p-drop').style.display = hasFiles ? 'none' : '';
+  document.getElementById('i2p-controls').style.display = hasFiles ? 'block' : 'none';
+  document.getElementById('i2p-info').textContent = hasFiles ? `${i2pFiles.length} image${i2pFiles.length > 1 ? 's' : ''} selected — each becomes one PDF page` : '';
+}
+function i2p_remove(idx) {
+  i2pFiles.splice(idx, 1);
+  i2p_render();
+  if (!i2pFiles.length) {
+    document.getElementById('i2p-drop').style.display = '';
+    document.getElementById('i2p-controls').style.display = 'none';
+  }
+}
+async function i2p_convert() {
+  if (!i2pFiles.length) { toast('⚠️ Add at least one image'); return; }
+  const { jsPDF } = window.jspdf;
+  const pageSize = document.getElementById('i2p-size').value;
+  const orientPref = document.getElementById('i2p-orient').value;
+  const margin = parseInt(document.getElementById('i2p-margin').value);
+  let doc = null;
+  toast('⏳ Converting...');
+  try {
+    for (let i = 0; i < i2pFiles.length; i++) {
+      const dataUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(i2pFiles[i]); });
+      const img = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = dataUrl; });
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      let orient = orientPref === 'auto' ? (iw >= ih ? 'landscape' : 'portrait') : orientPref;
+      let fmt, docFmt;
+      if (pageSize === 'fit') {
+        const pw = iw * 25.4 / 96, ph = ih * 25.4 / 96;
+        if (i === 0) doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pw, ph] });
+        else doc.addPage([pw, ph], 'portrait');
+        doc.addImage(dataUrl, iw > ih ? 'JPEG' : 'PNG', 0, 0, pw, ph);
+      } else {
+        docFmt = pageSize === 'a4' ? 'a4' : 'letter';
+        if (i === 0) doc = new jsPDF({ orientation: orient, unit: 'mm', format: docFmt });
+        else doc.addPage(docFmt, orient);
+        const pgW = doc.internal.pageSize.getWidth(), pgH = doc.internal.pageSize.getHeight();
+        const availW = pgW - margin * 2, availH = pgH - margin * 2;
+        let dw = availW, dh = availW * ih / iw;
+        if (dh > availH) { dh = availH; dw = availH * iw / ih; }
+        const x = (pgW - dw) / 2, y = (pgH - dh) / 2;
+        doc.addImage(dataUrl, iw > ih ? 'JPEG' : 'PNG', x, y, dw, dh);
+      }
+    }
+    const fn = i2pFiles.length === 1 ? i2pFiles[0].name.replace(/\.[^.]+$/, '') + '.pdf' : 'images-to-pdf.pdf';
+    doc.save(fn);
+    toast('✅ PDF downloaded!');
+  } catch(e) { toast('⚠️ Conversion failed: ' + e.message); }
+}
+function i2p_reset() {
+  i2pFiles = [];
+  document.getElementById('i2p-thumbs').innerHTML = '';
+  document.getElementById('i2p-drop').style.display = '';
+  document.getElementById('i2p-controls').style.display = 'none';
+  document.getElementById('i2p-file').value = '';
+}
+
+// ─── PDF TO IMAGE ──────────────────────────────────────────────────────────────
+let p2iPdf = null, p2iPages = [];
+function p2i_init() {
+  if (window.pdfjsLib && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+}
+async function p2i_load(input) {
+  const f = input.files[0];
+  if (!f) return;
+  if (f.size > 50 * 1024 * 1024) { toast('⚠️ File too large (max 50 MB)'); return; }
+  p2i_init();
+  toast('⏳ Loading PDF...');
+  try {
+    const buf = await f.arrayBuffer();
+    p2iPdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    const n = p2iPdf.numPages;
+    document.getElementById('p2i-drop').style.display = 'none';
+    document.getElementById('p2i-controls').style.display = 'block';
+    document.getElementById('p2i-info').textContent = `${n} page${n > 1 ? 's' : ''} found in "${f.name}"`;
+    document.getElementById('p2i-pages').innerHTML = '';
+    document.getElementById('p2i-dl-all').style.display = 'none';
+    p2iPages = [];
+    toast('✅ PDF loaded — click Convert');
+  } catch(e) { toast('⚠️ Could not read PDF'); }
+}
+function p2i_drop_ev(e) {
+  e.preventDefault();
+  document.getElementById('p2i-drop').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') p2i_load({ files: [f] });
+}
+async function p2i_convert() {
+  if (!p2iPdf) { toast('⚠️ Upload a PDF first'); return; }
+  const fmt = document.getElementById('p2i-fmt').value;
+  const quality = document.getElementById('p2i-q').value / 100;
+  const n = p2iPdf.numPages;
+  const pagesWrap = document.getElementById('p2i-pages');
+  const bar = document.getElementById('p2i-bar');
+  const progTxt = document.getElementById('p2i-prog-txt');
+  pagesWrap.innerHTML = ''; p2iPages = [];
+  document.getElementById('p2i-progress').style.display = 'block';
+  document.getElementById('p2i-dl-all').style.display = 'none';
+  for (let i = 1; i <= n; i++) {
+    progTxt.textContent = `Converting page ${i} of ${n}…`;
+    bar.style.width = ((i - 1) / n * 100) + '%';
+    const page = await p2iPdf.getPage(i);
+    const vp = page.getViewport({ scale: 2.0 });
+    const canvas = document.createElement('canvas');
+    canvas.width = vp.width; canvas.height = vp.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+    const dataUrl = canvas.toDataURL(fmt, quality);
+    const ext = fmt === 'image/png' ? 'png' : 'jpg';
+    p2iPages.push({ dataUrl, page: i, ext });
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:6px;width:100px';
+    div.innerHTML = `<div style="width:100px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)"><img src="${dataUrl}" style="width:100%;display:block"></div>
+      <div style="font-size:12px;color:var(--text-sub)">Page ${i}</div>
+      <button onclick="p2i_dl_one(${i-1})" style="font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(20,184,166,0.15);border:1px solid rgba(20,184,166,0.3);color:#5EEAD4;cursor:pointer;width:100%">⬇ Save</button>`;
+    pagesWrap.appendChild(div);
+    bar.style.width = (i / n * 100) + '%';
+  }
+  progTxt.textContent = `Done! ${n} page${n > 1 ? 's' : ''} converted.`;
+  setTimeout(() => { document.getElementById('p2i-progress').style.display = 'none'; }, 1800);
+  if (n > 1) document.getElementById('p2i-dl-all').style.display = '';
+  toast(`✅ ${n} page${n > 1 ? 's' : ''} converted!`);
+}
+function p2i_dl_one(idx) {
+  const { dataUrl, page, ext } = p2iPages[idx];
+  const a = document.createElement('a');
+  a.download = `page-${page}.${ext}`; a.href = dataUrl; a.click();
+}
+async function p2i_dl_all() {
+  if (!window.JSZip) { toast('⚠️ JSZip not loaded'); return; }
+  toast('⏳ Creating ZIP…');
+  const zip = new JSZip();
+  p2iPages.forEach(({ dataUrl, page, ext }) => {
+    zip.file(`page-${String(page).padStart(3,'0')}.${ext}`, dataUrl.split(',')[1], { base64: true });
+  });
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const a = document.createElement('a');
+  a.download = 'pdf-pages.zip'; a.href = URL.createObjectURL(blob); a.click();
+  toast('✅ ZIP downloaded!');
+}
+function p2i_reset() {
+  p2iPdf = null; p2iPages = [];
+  document.getElementById('p2i-drop').style.display = '';
+  document.getElementById('p2i-controls').style.display = 'none';
+  document.getElementById('p2i-pages').innerHTML = '';
+  document.getElementById('p2i-file').value = '';
+  document.getElementById('p2i-dl-all').style.display = 'none';
+  document.getElementById('p2i-progress').style.display = 'none';
 }
 function fmtBytes(b) {
   if (b<1024) return b+' B';
